@@ -1,0 +1,56 @@
+[
+{
+  "directory": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make",
+  "command": "C:/ProgramData/mingw64/mingw64/bin/c++.exe -DASSETS_PATH=\\\"C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/assets/\\\" @CMakeFiles/main.dir/includes_CXX.rsp -std=gnu++20 -o CMakeFiles/main.dir/libs/header/glm/detail/glm.cpp.obj -c C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/glm/detail/glm.cpp",
+  "file": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/glm/detail/glm.cpp",
+  "output": "CMakeFiles/main.dir/libs/header/glm/detail/glm.cpp.obj"
+},
+{
+  "directory": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make",
+  "command": "C:/ProgramData/mingw64/mingw64/bin/c++.exe -DASSETS_PATH=\\\"C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/assets/\\\" @CMakeFiles/main.dir/includes_CXX.rsp -std=gnu++20 -o CMakeFiles/main.dir/libs/header/imgui/imgui.cpp.obj -c C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui.cpp",
+  "file": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui.cpp",
+  "output": "CMakeFiles/main.dir/libs/header/imgui/imgui.cpp.obj"
+},
+{
+  "directory": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make",
+  "command": "C:/ProgramData/mingw64/mingw64/bin/c++.exe -DASSETS_PATH=\\\"C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/assets/\\\" @CMakeFiles/main.dir/includes_CXX.rsp -std=gnu++20 -o CMakeFiles/main.dir/libs/header/imgui/imgui_demo.cpp.obj -c C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_demo.cpp",
+  "file": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_demo.cpp",
+  "output": "CMakeFiles/main.dir/libs/header/imgui/imgui_demo.cpp.obj"
+},
+{
+  "directory": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make",
+  "command": "C:/ProgramData/mingw64/mingw64/bin/c++.exe -DASSETS_PATH=\\\"C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/assets/\\\" @CMakeFiles/main.dir/includes_CXX.rsp -std=gnu++20 -o CMakeFiles/main.dir/libs/header/imgui/imgui_draw.cpp.obj -c C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_draw.cpp",
+  "file": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_draw.cpp",
+  "output": "CMakeFiles/main.dir/libs/header/imgui/imgui_draw.cpp.obj"
+},
+{
+  "directory": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make",
+  "command": "C:/ProgramData/mingw64/mingw64/bin/c++.exe -DASSETS_PATH=\\\"C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/assets/\\\" @CMakeFiles/main.dir/includes_CXX.rsp -std=gnu++20 -o CMakeFiles/main.dir/libs/header/imgui/imgui_impl_sdl2.cpp.obj -c C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_impl_sdl2.cpp",
+  "file": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_impl_sdl2.cpp",
+  "output": "CMakeFiles/main.dir/libs/header/imgui/imgui_impl_sdl2.cpp.obj"
+},
+{
+  "directory": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make",
+  "command": "C:/ProgramData/mingw64/mingw64/bin/c++.exe -DASSETS_PATH=\\\"C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/assets/\\\" @CMakeFiles/main.dir/includes_CXX.rsp -std=gnu++20 -o CMakeFiles/main.dir/libs/header/imgui/imgui_impl_sdlrenderer2.cpp.obj -c C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_impl_sdlrenderer2.cpp",
+  "file": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_impl_sdlrenderer2.cpp",
+  "output": "CMakeFiles/main.dir/libs/header/imgui/imgui_impl_sdlrenderer2.cpp.obj"
+},
+{
+  "directory": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make",
+  "command": "C:/ProgramData/mingw64/mingw64/bin/c++.exe -DASSETS_PATH=\\\"C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/assets/\\\" @CMakeFiles/main.dir/includes_CXX.rsp -std=gnu++20 -o CMakeFiles/main.dir/libs/header/imgui/imgui_tables.cpp.obj -c C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_tables.cpp",
+  "file": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_tables.cpp",
+  "output": "CMakeFiles/main.dir/libs/header/imgui/imgui_tables.cpp.obj"
+},
+{
+  "directory": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make",
+  "command": "C:/ProgramData/mingw64/mingw64/bin/c++.exe -DASSETS_PATH=\\\"C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/assets/\\\" @CMakeFiles/main.dir/includes_CXX.rsp -std=gnu++20 -o CMakeFiles/main.dir/libs/header/imgui/imgui_widgets.cpp.obj -c C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_widgets.cpp",
+  "file": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/header/imgui/imgui_widgets.cpp",
+  "output": "CMakeFiles/main.dir/libs/header/imgui/imgui_widgets.cpp.obj"
+},
+{
+  "directory": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make",
+  "command": "C:/ProgramData/mingw64/mingw64/bin/c++.exe -DASSETS_PATH=\\\"C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/assets/\\\" @CMakeFiles/main.dir/includes_CXX.rsp -std=gnu++20 -o CMakeFiles/main.dir/src/Main.cpp.obj -c C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/src/Main.cpp",
+  "file": "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/src/Main.cpp",
+  "output": "CMakeFiles/main.dir/src/Main.cpp.obj"
+}
+]

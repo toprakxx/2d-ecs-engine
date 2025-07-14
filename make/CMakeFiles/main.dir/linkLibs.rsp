@@ -1,0 +1,1 @@
+ "C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/compiled/SDL2/lib/x64/*.lib" C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/libs/compiled/lua/liblua54.a -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
