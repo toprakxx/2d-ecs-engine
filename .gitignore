@@ -1,6 +1,6 @@
 # Ignore these files
 compile_commands.json
-Makefile
+#Makefile
 
 # Ignore these directories
 make/
