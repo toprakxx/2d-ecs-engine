@@ -1,0 +1,7 @@
+# Ignore these files
+compile_commands.json
+Makefile
+
+# Ignore these directories
+make/
+build/

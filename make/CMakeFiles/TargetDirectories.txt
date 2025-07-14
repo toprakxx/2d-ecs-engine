@@ -1,3 +1,0 @@
-C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make/CMakeFiles/main.dir
-C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make/CMakeFiles/edit_cache.dir
-C:/Users/Administrator/Projects/Cpp/2d_ecs_engine/make/CMakeFiles/rebuild_cache.dir
