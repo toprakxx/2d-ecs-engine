@@ -1,8 +1,8 @@
-.PHONY: source build run
+.PHONY: source build run restart test play clean
 .ONESHELL:
 
 restart: clean source build run
-play: source build run
+test: source build run
 
 source:
 	#Generating the compile_commands file for clangd lsp
@@ -26,3 +26,9 @@ clean:
 	mkdir build
 	rmdir /S /Q make
 	mkdir make
+
+play:
+	mkdir
+	cd ..\build
+	cmake ..
+	".\build\Debug\main.exe"
