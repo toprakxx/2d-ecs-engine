@@ -1,37 +1,38 @@
-#include <iostream>
 #include <SDL.h>
 #include "./Game.h"
 #include "../Logger/Logger.h"
+#include "SDL_hints.h"
+#include "SDL_video.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
 
 Game::Game() {
-	Logger::Log("Game constructed.");
+	Logger::Confirm("Game constructed.");
 }
 
 Game::~Game() {
-	Logger::Log("Game destructed.");
+	Logger::Confirm("Game destructed.");
 }
 
 void Game::Initalize() {
+	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
 	if(SDL_Init(SDL_INIT_EVERYTHING)) {
-		Logger::Log("Error initializing SDL.");
+		Logger::Err("Error initializing SDL.");
 	}
 
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
+	printf("SDL sees desktop as %dx%d\n", displayMode.w, displayMode.h);
 
-	Game::windowWidth = 1920;
-	// windowWidth = displayMode.w;
-	// windowWidth = 2400;
+	windowWidth = 1920;
+	//windowWidth = displayMode.w;
 
-	Game::windowHeight = 1080;
-	// windowHeight = displayMode.h;
-	// windowHeight = 1920;
+	windowHeight = 1080;
+	//windowHeight = displayMode.h;
 
 	window = SDL_CreateWindow(
-		NULL,
+		"Game",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		windowWidth,
@@ -42,13 +43,13 @@ void Game::Initalize() {
 		0
 	);
 	if(!window) {
-		Logger::Log("Error creating the SDL_Window.");
+		Logger::Err("Error creating the SDL_Window.");
 		return;
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	if(!renderer) {
-		Logger::Log("Error creating the SDL_Renderer.");
+		Logger::Err("Error creating the SDL_Renderer.");
 		return;
 	}
 
