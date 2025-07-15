@@ -42,13 +42,13 @@ void Game::Initalize() {
 		0
 	);
 	if(!window) {
-		Logger::Log("Error creating the SDL_Window.");
+		std::cerr << "Error creating the SDL_Window." << std::endl;
 		return;
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	if(!renderer) {
-		Logger::Log("Error creating the SDL_Renderer.");
+		std::cerr << "Error creating the SDL_Renderer." << std::endl;
 		return;
 	}
 
