@@ -90,6 +90,15 @@ public:
 	Pool() {componentData.reserve(VECTOR_INIT);}
 	~Pool() override = default;
 
+	bool isEmpty() { return componentData.empty(); }
+	int GetSize() const { return componentData.size(); }
+	void Resize(int n) { componentData.resize(n); }
+	void Clear() { componentData.clear(); }
+	void Add(TComponent object) { componentData.push_back(object); }
+	void Set(int index,TComponent object) { componentData[index] = object; }
+	TComponent& Get(int index) { return componentData[index]; }
+	TComponent& operator[] (int index) { return componentData[index]; }
+
 private:
 	std::vector<TComponent> componentData;
 };
@@ -180,4 +189,44 @@ void System::RequireComponent() {
 ////////////////////////////////////////////
 //Registry templated functions
 ////////////////////////////////////////////
+template <typename TComponent, typename ...TArgs>
+void Registry::AddComponent(Entity entity, TArgs&& ...args) {
+	const int componentID = Component<TComponent>::GetID();
+	const int entityID = entity.id;
 
+	//This is basically only a consideration if the Registry is adding this component to a entity for the first time
+	if (componentID >= componentPools.size()) {
+		componentPools.resize(componentID + 1, nullptr);
+	}
+	if (!componentPools[componentID]) {
+		std::shared_ptr<Pool<TComponent>> newComponentPool = std::make_shared<Pool<TComponent>>();
+		componentPools[componentID] = newComponentPool;
+	}
+
+	std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
+
+	if (entityID >= componentPool) componentPool->Resize(numOfEntites);
+
+	TComponent newComponent(std::forward<TArgs>(args)...);
+	componentPool->Set(entityID, newComponent);
+	entityComponentSignatures[entityID].set(componentID);
+}
+
+template<typename TComponent>
+void Registry::RemoveComponent(Entity entity) {
+	const int componentID = Component<TComponent>::GetID();
+	entityComponentSignatures[entity.id].set(componentID, false);
+}
+
+template<typename TComponent>
+bool Registry::HasComponent(Entity entity) const {
+	const int componentID = Component<TComponent>::GetID();
+	return entityComponentSignatures[entity.id].test(componentID);
+}
+
+template<typename TComponent>
+TComponent& Registry::GetComponent(Entity entity) const {
+	const int componentID = Component<TComponent>::GetID();
+	std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
+	return componentPool->Get(entity.id);
+}
