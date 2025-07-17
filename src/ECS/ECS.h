@@ -1,23 +1,59 @@
 #pragma once
+#include <memory>
+#include <bitset>
+#include <queue>
+#include <vector>
+#include <unordered_map>
+#include <typeindex>
+
+const unsigned int VECTOR_INIT = 300;
+const unsigned int MAX_COMPONENTS = 32;
+using Signature = std::bitset<MAX_COMPONENTS>;
 
 ////////////////////////////////////////////
 //Entity
 ////////////////////////////////////////////
 class Entity {
 public:
+	Entity(int _id) : id(_id) {};
+	void Kill();
 
-private:
+	int id;
 
+	template <typename TComponent, typename ...TArgs>
+	void AddComponent(TArgs&& ...args);
+	template<typename TComponent>
+	void RemoveComponent();
+	template<typename TComponent>
+	bool HasComponent() const;
+	template<typename TComponent>
+	TComponent& GetComponent() const;
+
+	bool operator== (const Entity other) const { return id == other.id;}
+	bool operator!= (const Entity& other) const { return id != other.id; }
+	bool operator> (const Entity& other) const { return id > other.id; }
+	bool operator< (const Entity& other) const { return id < other.id; }
 };
 
 ////////////////////////////////////////////
 //Component
 ////////////////////////////////////////////
-class Component {
+
+//Other than the data they carry Components only require an id per class level for Signature and storage access purposes.
+
+class IComponent {
+protected:
+	static int nextID;
+};
+
+template<typename TComponent>
+class Component : public IComponent{
 public:
-
-private:
-
+	static int GetID() {
+		//Static local var. initializations only run in the first call of a function
+		static const int id = nextID++;
+		return id;
+	}
 };
 
 ////////////////////////////////////////////
@@ -25,21 +61,123 @@ private:
 ////////////////////////////////////////////
 class System {
 public:
+	System() = default;
+	virtual ~System() = default;
+
+	void AddEntityToSystem(Entity entity);
+	void RemoveEntityFromSystem(Entity entity);
+	std::vector<Entity>& GetSystemEntities();
+	const Signature& GetSystemComponentSignature() const;
+	template <typename TComponent> void RequireComponent();
 
 private:
-
+	Signature systemComponentSignature;
+	std::vector<Entity> systemEntities;
 };
 
 ////////////////////////////////////////////
 //Registry
 ////////////////////////////////////////////
-class Registry {
+
+class IPool {
 public:
+	virtual ~IPool() = default;
+};
+
+template<typename TComponent>
+class Pool : public IPool{
+public:
+	Pool() {componentData.reserve(VECTOR_INIT);}
+	~Pool() override = default;
 
 private:
+	std::vector<TComponent> componentData;
+};
 
+class Registry {
+public:
+	Registry();
+	~Registry();
+	static Registry* registry;
+	void Update();
+
+	Entity CreateEntity();
+	void KillEntity(Entity entity);
+
+	//Entity management
+	//Add the entity to the systems with matching signatures
+	void AddEntityToSystems(Entity entity);
+	void RemoveEntityFromSystems(Entity entity);
+
+	//Component management
+	template <typename TComponent, typename ...TArgs>
+	void AddComponent(Entity entity, TArgs&& ...args);
+	template<typename TComponent>
+	void RemoveComponent(Entity entity);
+	template<typename TComponent>
+	bool HasComponent(Entity entity) const;
+	template<typename TComponent>
+	TComponent& GetComponent(Entity entity) const;
+
+	//System management
+	template<typename TSystem, typename ...TArgs>
+	void AddSystem(TArgs&& ...args);
+	template<typename TSystem>
+	void RemoveSystem();
+	template<typename TSystem>
+	bool HasSystem() const;
+	template<typename TSystem>
+	TSystem& GetSystem() const;
+
+private:
+	int numOfEntites = 0;
+	//vector index == component type id, pool index == entity id
+	//[][] would first go to the data pool belonging to a component type
+	//and access the specific data of that component type belonging to an entity
+	std::vector<std::shared_ptr<IPool>> componentPools;
+	// index = entityID
+	// vector keeping track of which components each entity "has"
+	std::vector<Signature> entityComponentSignatures;
+	//const time access to System object of the given type
+	std::unordered_map<std::type_index, System*> systems;
+	std::vector<Entity> entitesToBeAdded;
+	std::vector<Entity> entitiesToBeKilled;
+	std::queue<int> freeIDs;
 };
 
 ////////////////////////////////////////////
-//Templated function implementations
+//Entity templated functions
 ////////////////////////////////////////////
+template<typename TComponent, typename ...TArgs>
+void Entity::AddComponent(TArgs&& ...args) {
+	Registry::registry->AddComponent<TComponent>(*this,std::forward<TArgs>(args)...);
+}
+
+template<typename TComponent>
+void Entity::RemoveComponent() {
+	Registry::registry->RemoveComponent<TComponent>(*this);
+}
+
+template<typename TComponent>
+bool Entity::HasComponent() const {
+	return Registry::registry->HasComponent<TComponent>(*this);
+}
+
+template<typename TComponent>
+TComponent& Entity::GetComponent() const {
+	return Registry::registry->GetComponent<TComponent>(*this);
+}
+
+////////////////////////////////////////////
+//System templated functions
+////////////////////////////////////////////
+template <typename TComponent>
+void System::RequireComponent() {
+	const int componentID = Component<TComponent>::GetID();
+	systemComponentSignature.set(componentID);
+}
+
+////////////////////////////////////////////
+//Registry templated functions
+////////////////////////////////////////////
+
