@@ -1,3 +1,4 @@
+#include <string>
 #include "ECS.h"
 
 Registry* Registry::registry = nullptr;
@@ -82,6 +83,8 @@ Entity Registry::CreateEntity() {
 		entityID = freeIDs.front();
 		freeIDs.pop();
 	}
+
+	Logger::Confirm("Entity created with id " + std::to_string(entityID));
 
 	Entity entity(entityID);
 	entitesToBeAdded.emplace_back(entity);

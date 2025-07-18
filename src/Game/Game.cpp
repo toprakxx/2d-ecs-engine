@@ -1,8 +1,6 @@
 #include <SDL.h>
 #include "./Game.h"
 #include "../Logger/Logger.h"
-#include "SDL_hints.h"
-#include "SDL_video.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -66,14 +64,27 @@ void Game::Run() {
 }
 
 void Game::SetUp() {
-
+	Entity test = registry.CreateEntity();
 }
 
 void Game::ProcessInput() {
-
+	SDL_Event sdlEvent;
+	while (SDL_PollEvent(&sdlEvent)) {
+		//SDL Core inputs
+		switch (sdlEvent.type) {
+		case SDL_QUIT:
+			isGameRunning = false;
+			break;
+		}
+	}
 }
 
 void Game::Update() {
+	// int timeToWait = MIN_MS_PER_FRAME - (SDL_GetTicks64() - msPassedUntilLastFrame);
+	// if (timeToWait > 0 && timeToWait <= MIN_MS_PER_FRAME) {
+	// 	SDL_Delay(timeToWait);
+	// }
+
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
 	msPassedUntilLastFrame = SDL_GetTicks64();

@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <typeindex>
+#include "../Logger/Logger.h"
 
 const unsigned int VECTOR_INIT = 300;
 const unsigned int MAX_COMPONENTS = 32;
@@ -148,7 +149,7 @@ private:
 	// vector keeping track of which components each entity "has"
 	std::vector<Signature> entityComponentSignatures;
 	//const time access to System object of the given type
-	std::unordered_map<std::type_index, System*> systems;
+	std::unordered_map<std::type_index, std::shared_ptr<System>> systems;
 	std::vector<Entity> entitesToBeAdded;
 	std::vector<Entity> entitiesToBeKilled;
 	std::queue<int> freeIDs;
@@ -229,4 +230,28 @@ TComponent& Registry::GetComponent(Entity entity) const {
 	const int componentID = Component<TComponent>::GetID();
 	std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
 	return componentPool->Get(entity.id);
+}
+
+template<typename TSystem, typename ...TArgs>
+void Registry::AddSystem(TArgs&& ...args) {
+	std::shared_ptr<System> newSystem = std::make_shared<TSystem>(std::forward<TSystem>(args)...);
+	systems.insert(std::make_pair(std::type_index(typeid(TSystem)), newSystem));
+}
+
+template<typename TSystem>
+void Registry::RemoveSystem() { 
+	auto system = systems.find(std::type_index(typeid(TSystem)));
+	if (system != systems.end()) systems.erase(system);
+}
+
+template<typename TSystem>
+bool Registry::HasSystem() const {
+	return systems.find(std::type_index(typeid(TSystem))) != systems.end();
+}
+
+template<typename TSystem>
+TSystem& Registry::GetSystem() const { 
+	auto system = systems.find(std::type_index(typeid(TSystem)));
+	if(system != systems.end()) return *(std::static_pointer_cast<TSystem>(system->second));
+	Logger::Err("Non existing system access attempt.");
 }
