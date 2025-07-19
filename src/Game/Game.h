@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL.h>
 #include "../ECS/ECS.h"
+#include "../AssetManager/AssetManager.h"
 
 const int MAX_FPS = 160;
 const int MIN_MS_PER_FRAME = 1000 / MAX_FPS;
@@ -22,9 +23,13 @@ public:
 
 private:
 	bool isGameRunning = false;
+
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
+
 	int msPassedUntilLastFrame = 0;
 	double deltaTime = 0;
+
 	Registry registry;
+	AssetManager assetManager;
 };

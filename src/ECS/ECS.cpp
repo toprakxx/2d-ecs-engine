@@ -84,7 +84,7 @@ Entity Registry::CreateEntity() {
 		freeIDs.pop();
 	}
 
-	Logger::Confirm("Entity created with id " + std::to_string(entityID));
+	Logger::Log("Entity created with id " + std::to_string(entityID));
 
 	Entity entity(entityID);
 	entitesToBeAdded.emplace_back(entity);

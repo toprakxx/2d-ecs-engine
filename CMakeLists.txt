@@ -34,7 +34,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 #precompiled dynamic library dlls
 file(GLOB ALL_DLLS
-	"${CMAKE_SOURCE_DIR}/libs/compiled/SDL2/lib/x64/SDL2.dll"
+	"${CMAKE_SOURCE_DIR}/libs/compiled/SDL2/lib/x64/*.dll"
 	"${CMAKE_SOURCE_DIR}/libs/compiled/lua/lua54.dll"
 )
 #place the dlls next to the executable

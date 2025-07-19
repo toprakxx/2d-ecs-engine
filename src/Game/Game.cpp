@@ -65,6 +65,7 @@ void Game::Run() {
 
 void Game::SetUp() {
 	Entity test = registry.CreateEntity();
+	assetManager.AddTexture(renderer, "test-dummy", "./images/test.jpeg");
 }
 
 void Game::ProcessInput() {
