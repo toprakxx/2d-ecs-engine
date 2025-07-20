@@ -1,6 +1,11 @@
 #include <SDL.h>
+#include <glm/glm.hpp>
 #include "./Game.h"
 #include "../Logger/Logger.h"
+#include "../Systems/RenderSystem.hpp"
+#include "../Systems/MovementSystem.hpp"
+#include "../Components/TransformComponent.h"
+#include "../Components/SpriteComponent.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -64,8 +69,15 @@ void Game::Run() {
 }
 
 void Game::SetUp() {
+	assetManager.AddTexture(renderer, "blue-man", "./images/blue-man0.png");
+
+	registry.AddSystem<RenderSystem>();
+	registry.AddSystem<MovementSystem>();
+	
 	Entity test = registry.CreateEntity();
-	assetManager.AddTexture(renderer, "test-dummy", "./images/test.jpeg");
+	test.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(1.0, 1.0), 0.0);
+	test.AddComponent<SpriteComponent>("blue-man",16,16,10);
+
 }
 
 void Game::ProcessInput() {
@@ -86,6 +98,10 @@ void Game::Update() {
 	// 	SDL_Delay(timeToWait);
 	// }
 
+	registry.Update();
+
+	registry.GetSystem<MovementSystem>().Update(deltaTime);
+	
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
 	msPassedUntilLastFrame = SDL_GetTicks64();
@@ -94,6 +110,8 @@ void Game::Update() {
 void Game::Render() {
 	SDL_SetRenderDrawColor(renderer, 76, 187, 32, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
+
+	registry.GetSystem<RenderSystem>().Update(renderer, assetManager);
 
 	SDL_RenderPresent(renderer);
 }

@@ -1,11 +1,12 @@
 #pragma once
+#include <SDL.h>
 #include "../ECS/ECS.h"
 #include "../AssetManager/AssetManager.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
-#include <SDL.h>
 
 class RenderSystem : public System {
+public:
 	RenderSystem() {
 		RequireComponent<TransformComponent>();
 		RequireComponent<SpriteComponent>();
@@ -21,8 +22,8 @@ class RenderSystem : public System {
 			SDL_Rect destRect = {
 				static_cast<int>(transform.position.x),
 				static_cast<int>(transform.position.y),
-				sprite.width,
-				sprite.height
+				static_cast<int>(sprite.width * sprite.spriteScale * transform.scale.x),
+				static_cast<int>(sprite.height * sprite.spriteScale * transform.scale.y)
 			};
 
 			SDL_RenderCopyEx(
@@ -31,7 +32,7 @@ class RenderSystem : public System {
 				&srcRect, 
 				&destRect, 
 				transform.rotation, 
-				NULL, 
+				NULL,
 				sprite.flip
 			);
 		}

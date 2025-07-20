@@ -1,5 +1,8 @@
 #include <string>
+#include <algorithm>
+#include <typeindex>
 #include "ECS.h"
+#include "../Systems/RenderSystem.hpp"
 
 Registry* Registry::registry = nullptr;
 
@@ -46,7 +49,7 @@ const Signature& System::GetSystemComponentSignature() const {
 Registry::Registry() {
 	//Pre-allocating vector memories
 	componentPools.reserve(MAX_COMPONENTS);
-	entityComponentSignatures.reserve(VECTOR_INIT);
+	entityComponentSignatures.resize(VECTOR_INIT);
 	entitesToBeAdded.reserve(10);
 	entitiesToBeKilled.reserve(10);
 
@@ -98,9 +101,18 @@ void Registry::KillEntity(Entity entity) {
 void Registry::AddEntityToSystems(Entity entity) {
 	const Signature entitySignature = entityComponentSignatures[entity.id];
 
+	auto renderSign = systems[std::type_index(typeid(RenderSystem))]->GetSystemComponentSignature();
+
 	for (auto& system : systems) {
 		const auto& systemSignature = system.second->GetSystemComponentSignature();
 		if ((systemSignature & entitySignature) == systemSignature) system.second->AddEntityToSystem(entity);
+
+		if ((renderSign & entitySignature) == renderSign) {
+			std::vector<Entity>& refVector = system.second->GetSystemEntities();
+			std::sort(refVector.begin(), refVector.end(), [](const Entity &a, const Entity &b) {
+				return a.GetComponent<SpriteComponent>().zIndex < b.GetComponent<SpriteComponent>().zIndex;
+			});
+		}
 	}
 }
 

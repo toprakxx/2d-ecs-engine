@@ -206,7 +206,7 @@ void Registry::AddComponent(Entity entity, TArgs&& ...args) {
 
 	std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
 
-	if (entityID >= componentPool) componentPool->Resize(numOfEntites);
+	if (entityID >= componentPool->GetSize()) componentPool->Resize(numOfEntites);
 
 	TComponent newComponent(std::forward<TArgs>(args)...);
 	componentPool->Set(entityID, newComponent);
@@ -252,6 +252,6 @@ bool Registry::HasSystem() const {
 template<typename TSystem>
 TSystem& Registry::GetSystem() const { 
 	auto system = systems.find(std::type_index(typeid(TSystem)));
-	if(system != systems.end()) return *(std::static_pointer_cast<TSystem>(system->second));
-	Logger::Err("Non existing system access attempt.");
+	if(system == systems.end()) Logger::Err("Non existing system access attempt.");
+	return *(std::static_pointer_cast<TSystem>(system->second));
 }
