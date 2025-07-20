@@ -22,8 +22,8 @@ public:
 			SDL_Rect destRect = {
 				static_cast<int>(transform.position.x),
 				static_cast<int>(transform.position.y),
-				static_cast<int>(sprite.width * sprite.spriteScale * transform.scale.x),
-				static_cast<int>(sprite.height * sprite.spriteScale * transform.scale.y)
+				static_cast<int>(sprite.width * transform.scale.x),
+				static_cast<int>(sprite.height * transform.scale.y)
 			};
 
 			SDL_RenderCopyEx(

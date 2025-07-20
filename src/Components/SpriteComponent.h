@@ -7,7 +7,6 @@ struct SpriteComponent {
 		std::string _assetName = "",
 		int _width = 0,
 		int _height = 0,
-		double _spriteScale = 1.0,
 		int _zIndex = 0,
 		int _srcRectX = 0,
 		int _srcRectY = 0,
@@ -16,7 +15,6 @@ struct SpriteComponent {
 		assetName(_assetName),
 		width(_width), 
 		height(_height), 
-		spriteScale(_spriteScale),
 		zIndex(_zIndex),
 		isFixed(_isFixed),
 		srcRect(_srcRectX, _srcRectY, width, height),
@@ -26,7 +24,6 @@ struct SpriteComponent {
 	std::string assetName;
 	int width;
 	int height;
-	double spriteScale;
 	int zIndex;
 	SDL_Rect srcRect;
 	bool isFixed;

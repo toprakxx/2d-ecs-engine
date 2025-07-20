@@ -5,6 +5,7 @@
 #include "../Systems/RenderSystem.hpp"
 #include "../Systems/MovementSystem.hpp"
 #include "../Systems/AnimationSystem.hpp"
+#include "../Systems/CollisionSystem.hpp"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
@@ -22,7 +23,7 @@ Game::~Game() {
 }
 
 void Game::Initalize() {
-	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+	//SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
 	if(SDL_Init(SDL_INIT_EVERYTHING)) {
 		Logger::Err("Error initializing SDL.");
 	}
@@ -78,10 +79,10 @@ void Game::SetUp() {
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
 	registry.AddSystem<AnimationSystem>();
-	
+
 	Entity test = registry.CreateEntity();
-	test.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(1.0, 1.0), 0.0);
-	test.AddComponent<SpriteComponent>("blue-man-walk-right",16,16,10);
+	test.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(10), 0.0);
+	test.AddComponent<SpriteComponent>("blue-man-walk-right",16,16);
 	test.AddComponent<RigidBodyComponent>(glm::vec2(100,0));
 	test.AddComponent<AnimationComponent>(8);
 }
