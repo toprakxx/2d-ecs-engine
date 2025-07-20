@@ -158,6 +158,7 @@ private:
 ////////////////////////////////////////////
 //Entity templated functions
 ////////////////////////////////////////////
+
 template<typename TComponent, typename ...TArgs>
 void Entity::AddComponent(TArgs&& ...args) {
 	Registry::registry->AddComponent<TComponent>(*this,std::forward<TArgs>(args)...);

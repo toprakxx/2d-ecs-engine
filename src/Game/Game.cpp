@@ -4,8 +4,11 @@
 #include "../Logger/Logger.h"
 #include "../Systems/RenderSystem.hpp"
 #include "../Systems/MovementSystem.hpp"
+#include "../Systems/AnimationSystem.hpp"
 #include "../Components/TransformComponent.h"
+#include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
+#include "../Components/AnimationComponent.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -70,14 +73,17 @@ void Game::Run() {
 
 void Game::SetUp() {
 	assetManager.AddTexture(renderer, "blue-man", "./images/blue-man0.png");
+	assetManager.AddTexture(renderer, "blue-man-walk-right", "./images/blue-man-walk-sheet.png");
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
+	registry.AddSystem<AnimationSystem>();
 	
 	Entity test = registry.CreateEntity();
 	test.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(1.0, 1.0), 0.0);
-	test.AddComponent<SpriteComponent>("blue-man",16,16,10);
-
+	test.AddComponent<SpriteComponent>("blue-man-walk-right",16,16,10);
+	test.AddComponent<RigidBodyComponent>(glm::vec2(100,0));
+	test.AddComponent<AnimationComponent>(8);
 }
 
 void Game::ProcessInput() {
@@ -93,6 +99,7 @@ void Game::ProcessInput() {
 }
 
 void Game::Update() {
+	//Limiting the FPS
 	// int timeToWait = MIN_MS_PER_FRAME - (SDL_GetTicks64() - msPassedUntilLastFrame);
 	// if (timeToWait > 0 && timeToWait <= MIN_MS_PER_FRAME) {
 	// 	SDL_Delay(timeToWait);
@@ -101,6 +108,7 @@ void Game::Update() {
 	registry.Update();
 
 	registry.GetSystem<MovementSystem>().Update(deltaTime);
+	registry.GetSystem<AnimationSystem>().Update(deltaTime);
 	
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
