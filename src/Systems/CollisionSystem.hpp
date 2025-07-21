@@ -1,4 +1,5 @@
 #pragma once
+#include <SDL.h>
 #include "../ECS/ECS.h"
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/TransformComponent.h"
@@ -15,28 +16,26 @@ public:
 	void Update(EventBus& eventBus) {
 		auto entities = GetSystemEntities();
 
+		for (auto entity : entities) entity.GetComponent<BoxColliderComponent>().inCollision = false;
+
 		for (auto i = entities.begin(); i != entities.end(); i++) { 
 			Entity a = *i;
 			auto aTransform = a.GetComponent<TransformComponent>();
-			auto aBoxCollider = a.GetComponent<BoxColliderComponent>();
-
+			auto& aBoxCollider = a.GetComponent<BoxColliderComponent>();
 			if(!aBoxCollider.isEnabled) continue;
 
-			for (auto j = i + 1; j != entities.end(); j++) {
-				Entity b = *i;
+			for (auto j = std::next(i); j != entities.end(); j++) {
+				Entity b = *j;
 				auto bTransform = b.GetComponent<TransformComponent>();
-				auto bBoxCollider = b.GetComponent<BoxColliderComponent>();
+				auto& bBoxCollider = b.GetComponent<BoxColliderComponent>();
+				if(!bBoxCollider.isEnabled) continue;
 
 				bool collisionHappened = CheckAABBCollision(aTransform, aBoxCollider, bTransform, bBoxCollider);
 
 				if (collisionHappened) {
-					eventBus.EmitEvent<CollisionEvent>(a, b);
 					aBoxCollider.inCollision = true;
 					bBoxCollider.inCollision = true;
-				}
-				else {
-					aBoxCollider.inCollision = false;
-					bBoxCollider.inCollision = false;
+					eventBus.EmitEvent<CollisionEvent>(a, b);
 				}
 			}
 	   }

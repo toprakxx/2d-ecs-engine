@@ -6,10 +6,14 @@
 #include "../Systems/MovementSystem.hpp"
 #include "../Systems/AnimationSystem.hpp"
 #include "../Systems/CollisionSystem.hpp"
+#include "../Systems/DamageSystem.hpp"
+#include "../Systems/CollisionDebugSystem.hpp"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/AnimationComponent.h"
+#include "SDL_events.h"
+#include "SDL_keycode.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -79,12 +83,23 @@ void Game::SetUp() {
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
 	registry.AddSystem<AnimationSystem>();
+	registry.AddSystem<DamageSystem>();
+	registry.AddSystem<CollisionSystem>();
+	registry.AddSystem<CollisionDebugSystem>();
+
+	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
 	Entity test = registry.CreateEntity();
 	test.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(10), 0.0);
 	test.AddComponent<SpriteComponent>("blue-man-walk-right",16,16);
 	test.AddComponent<RigidBodyComponent>(glm::vec2(100,0));
 	test.AddComponent<AnimationComponent>(8);
+	test.AddComponent<BoxColliderComponent>(160, 160);
+
+	Entity obs = registry.CreateEntity();
+	obs.AddComponent<TransformComponent>(glm::vec2(750.0,350.0), glm::vec2(10), 0.0);
+	obs.AddComponent<SpriteComponent>("blue-man",16,16);
+	obs.AddComponent<BoxColliderComponent>(160, 160);
 }
 
 void Game::ProcessInput() {
@@ -94,6 +109,10 @@ void Game::ProcessInput() {
 		switch (sdlEvent.type) {
 		case SDL_QUIT:
 			isGameRunning = false;
+			break;
+		case SDL_KEYDOWN:
+			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) isGameRunning = false;
+			if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
 			break;
 		}
 	}
@@ -110,6 +129,7 @@ void Game::Update() {
 
 	registry.GetSystem<MovementSystem>().Update(deltaTime);
 	registry.GetSystem<AnimationSystem>().Update(deltaTime);
+	registry.GetSystem<CollisionSystem>().Update(eventBus);
 	
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
@@ -121,6 +141,7 @@ void Game::Render() {
 	SDL_RenderClear(renderer);
 
 	registry.GetSystem<RenderSystem>().Update(renderer, assetManager);
+	registry.GetSystem<CollisionDebugSystem>().Update(renderer, inDebugMode);
 
 	SDL_RenderPresent(renderer);
 }
