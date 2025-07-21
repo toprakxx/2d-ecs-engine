@@ -12,7 +12,7 @@ public:
 		RequireComponent<SpriteComponent>();
 	}
 
-	void Update(SDL_Renderer* renderer, AssetManager& assetManager) {
+	void Update(SDL_Renderer* renderer, AssetManager& assetManager, SDL_Rect& camera) {
 		for (auto entity : GetSystemEntities()) {
 			const TransformComponent& transform = entity.GetComponent<TransformComponent>();
 			const SpriteComponent& sprite = entity.GetComponent<SpriteComponent>();
@@ -20,8 +20,8 @@ public:
 			SDL_Rect srcRect = sprite.srcRect;
 
 			SDL_Rect destRect = {
-				static_cast<int>(transform.position.x),
-				static_cast<int>(transform.position.y),
+				static_cast<int>(transform.position.x - (sprite.isFixed ? 0 : camera.x)),
+				static_cast<int>(transform.position.y - (sprite.isFixed ? 0 : camera.y)),
 				static_cast<int>(sprite.width * transform.scale.x),
 				static_cast<int>(sprite.height * transform.scale.y)
 			};

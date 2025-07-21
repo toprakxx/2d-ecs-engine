@@ -35,4 +35,5 @@ private:
 	Registry registry;
 	AssetManager assetManager;
 	EventBus eventBus;
+	SDL_Rect camera;
 };

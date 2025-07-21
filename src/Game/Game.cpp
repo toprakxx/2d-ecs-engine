@@ -2,18 +2,20 @@
 #include <glm/glm.hpp>
 #include "./Game.h"
 #include "../Logger/Logger.h"
+
 #include "../Systems/RenderSystem.hpp"
 #include "../Systems/MovementSystem.hpp"
 #include "../Systems/AnimationSystem.hpp"
 #include "../Systems/CollisionSystem.hpp"
-#include "../Systems/DamageSystem.hpp"
+#include "../Systems/DamageSystem.hpp" //Update free, subscriber
 #include "../Systems/CollisionDebugSystem.hpp"
+#include "../Systems/CameraFollowSystem.hpp"
+
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/AnimationComponent.h"
-#include "SDL_events.h"
-#include "SDL_keycode.h"
+#include "../Components/CameraFollowComponent.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -27,7 +29,8 @@ Game::~Game() {
 }
 
 void Game::Initalize() {
-	//SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+	//Resolution awareness
+	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
 	if(SDL_Init(SDL_INIT_EVERYTHING)) {
 		Logger::Err("Error initializing SDL.");
 	}
@@ -48,10 +51,10 @@ void Game::Initalize() {
 		SDL_WINDOWPOS_CENTERED,
 		windowWidth,
 		windowHeight,
-		// SDL_WINDOW_FULLSCREEN,
-		// SDL_WINDOW_BORDERLESS,
-		// SDL_WINDOW_RESIZABLE,
-		0
+		// SDL_WINDOW_FULLSCREEN
+		SDL_WINDOW_BORDERLESS
+		// SDL_WINDOW_RESIZABLE
+		// 0
 	);
 	if(!window) {
 		Logger::Err("Error creating the SDL_Window.");
@@ -63,6 +66,12 @@ void Game::Initalize() {
 		Logger::Err("Error creating the SDL_Renderer.");
 		return;
 	}
+
+	//Initalizing the camera
+	camera.x = 0;
+	camera.y = 0;
+	camera.w = windowWidth;
+	camera.h = windowHeight;
 
 	isGameRunning = true;
 }
@@ -86,20 +95,22 @@ void Game::SetUp() {
 	registry.AddSystem<DamageSystem>();
 	registry.AddSystem<CollisionSystem>();
 	registry.AddSystem<CollisionDebugSystem>();
+	registry.AddSystem<CameraFollowSystem>();
 
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
 	Entity test = registry.CreateEntity();
 	test.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(10), 0.0);
 	test.AddComponent<SpriteComponent>("blue-man-walk-right",16,16);
-	test.AddComponent<RigidBodyComponent>(glm::vec2(100,0));
+	// test.AddComponent<RigidBodyComponent>(glm::vec2(100,0));
 	test.AddComponent<AnimationComponent>(8);
 	test.AddComponent<BoxColliderComponent>(160, 160);
+	test.AddComponent<CameraFollowComponent>();
 
 	Entity obs = registry.CreateEntity();
 	obs.AddComponent<TransformComponent>(glm::vec2(750.0,350.0), glm::vec2(10), 0.0);
 	obs.AddComponent<SpriteComponent>("blue-man",16,16);
-	obs.AddComponent<BoxColliderComponent>(160, 160);
+	// obs.AddComponent<BoxColliderComponent>(160, 160);
 }
 
 void Game::ProcessInput() {
@@ -130,6 +141,7 @@ void Game::Update() {
 	registry.GetSystem<MovementSystem>().Update(deltaTime);
 	registry.GetSystem<AnimationSystem>().Update(deltaTime);
 	registry.GetSystem<CollisionSystem>().Update(eventBus);
+	registry.GetSystem<CameraFollowSystem>().Update(camera);
 	
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
@@ -140,8 +152,8 @@ void Game::Render() {
 	SDL_SetRenderDrawColor(renderer, 76, 187, 32, SDL_ALPHA_OPAQUE);
 	SDL_RenderClear(renderer);
 
-	registry.GetSystem<RenderSystem>().Update(renderer, assetManager);
-	registry.GetSystem<CollisionDebugSystem>().Update(renderer, inDebugMode);
+	registry.GetSystem<RenderSystem>().Update(renderer, assetManager, camera);
+	registry.GetSystem<CollisionDebugSystem>().Update(renderer, inDebugMode, camera);
 
 	SDL_RenderPresent(renderer);
 }
