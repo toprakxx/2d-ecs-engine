@@ -1,5 +1,6 @@
 # Ignore these files
 compile_commands.json
+imgui.ini
 #Makefile
 
 # Ignore these directories
