@@ -10,12 +10,14 @@
 #include "../Systems/DamageSystem.hpp" //Update free, subscriber
 #include "../Systems/CollisionDebugSystem.hpp"
 #include "../Systems/CameraFollowSystem.hpp"
+#include "../Systems/TextRenderSystem.hpp"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
 #include "../Components/AnimationComponent.h"
 #include "../Components/CameraFollowComponent.h"
+#include "../Components/TextComponent.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -33,6 +35,11 @@ void Game::Initalize() {
 	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
 	if(SDL_Init(SDL_INIT_EVERYTHING)) {
 		Logger::Err("Error initializing SDL.");
+	} 
+
+	if (TTF_Init() != 0) {
+		Logger::Err("Error initializing TTF");
+		return;
 	}
 
 	SDL_DisplayMode displayMode;
@@ -86,8 +93,10 @@ void Game::Run() {
 }
 
 void Game::SetUp() {
-	assetManager.AddTexture(renderer, "blue-man", "./images/blue-man0.png");
-	assetManager.AddTexture(renderer, "blue-man-walk-right", "./images/blue-man-walk-sheet.png");
+	assetManager.AddTexture(renderer, "blue-man", "images/blue-man0.png");
+	assetManager.AddTexture(renderer, "blue-man-walk-right", "images/blue-man-walk-sheet.png");
+
+	assetManager.AddFont("arial-40", "fonts/arial.ttf", 40);
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
@@ -96,6 +105,7 @@ void Game::SetUp() {
 	registry.AddSystem<CollisionSystem>();
 	registry.AddSystem<CollisionDebugSystem>();
 	registry.AddSystem<CameraFollowSystem>();
+	registry.AddSystem<TextRenderSystem>();
 
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
@@ -112,6 +122,10 @@ void Game::SetUp() {
 	obs.AddComponent<TransformComponent>(glm::vec2(750.0,350.0), glm::vec2(10), 0.0);
 	obs.AddComponent<SpriteComponent>("blue-man",16,16);
 	obs.AddComponent<BoxColliderComponent>(160, 160);
+
+	Entity text = registry.CreateEntity();
+	SDL_Color white = {255, 255, 255};
+	text.AddComponent<TextComponent>(glm::vec2(810.0, 50.0),"Blue Man Game", "arial-40", white, true);
 }
 
 void Game::ProcessInput() {
@@ -155,6 +169,7 @@ void Game::Render() {
 
 	registry.GetSystem<RenderSystem>().Update(renderer, assetManager, camera);
 	registry.GetSystem<CollisionDebugSystem>().Update(renderer, inDebugMode, camera);
+	registry.GetSystem<TextRenderSystem>().Update(renderer, assetManager, camera);
 
 	SDL_RenderPresent(renderer);
 }

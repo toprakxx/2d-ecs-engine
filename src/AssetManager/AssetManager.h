@@ -12,8 +12,10 @@ public:
 	~AssetManager();
 
 	void ClearAssets();
+
 	void AddTexture(SDL_Renderer* renderer, const std::string_view& assetName, const std::string& filePath);
 	SDL_Texture* GetTexture(const std::string& assetName);
+
 	void AddFont(const std::string_view& fontName, const std::string& filePath, int fontSize);
 	TTF_Font* GetFont(const std::string& fontName);
 
