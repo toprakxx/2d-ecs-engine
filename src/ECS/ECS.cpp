@@ -17,6 +17,14 @@ void Entity::Kill() {
 	Registry::registry->KillEntity(*this);
 }
 
+void Entity::AddTag(Tag tag) {
+	Registry::registry->AddTagToEntity(*this, tag);
+}
+
+bool Entity::HasTag(Tag tag) {
+	return Registry::registry->EntityHasTag(*this, tag);
+};
+
 ////////////////////////////////////////////
 //Component
 ////////////////////////////////////////////
@@ -69,6 +77,7 @@ void Registry::Update() {
 	for (auto entity : entitiesToBeKilled) {
 		RemoveEntityFromSystems(entity);
 		entityComponentSignatures[entity.id].reset();
+		entityTagSignatures[entity.id].reset();
 		freeIDs.push(entity.id);
 	}
 	entitiesToBeKilled.clear();
@@ -118,4 +127,12 @@ void Registry::AddEntityToSystems(Entity entity) {
 
 void Registry::RemoveEntityFromSystems(Entity entity) {
 	for (auto& system : systems) system.second->RemoveEntityFromSystem(entity);
+}
+
+void Registry::AddTagToEntity(Entity entity,Tag tag) {
+	entityTagSignatures[entity.id].set(tag);
+}
+
+bool Registry::EntityHasTag(Entity entity, Tag tag) {
+	return entityTagSignatures[entity.id].test(tag);
 }

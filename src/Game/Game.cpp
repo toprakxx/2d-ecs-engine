@@ -100,9 +100,10 @@ void Game::SetUp() {
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
 	Entity test = registry.CreateEntity();
+	test.AddTag(Tag::Player);
 	test.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(10), 0.0);
 	test.AddComponent<SpriteComponent>("blue-man-walk-right",16,16);
-	// test.AddComponent<RigidBodyComponent>(glm::vec2(100,0));
+	test.AddComponent<RigidBodyComponent>(glm::vec2(100,0));
 	test.AddComponent<AnimationComponent>(8);
 	test.AddComponent<BoxColliderComponent>(160, 160);
 	test.AddComponent<CameraFollowComponent>();
@@ -110,7 +111,7 @@ void Game::SetUp() {
 	Entity obs = registry.CreateEntity();
 	obs.AddComponent<TransformComponent>(glm::vec2(750.0,350.0), glm::vec2(10), 0.0);
 	obs.AddComponent<SpriteComponent>("blue-man",16,16);
-	// obs.AddComponent<BoxColliderComponent>(160, 160);
+	obs.AddComponent<BoxColliderComponent>(160, 160);
 }
 
 void Game::ProcessInput() {

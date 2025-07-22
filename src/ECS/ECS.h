@@ -5,10 +5,12 @@
 #include <vector>
 #include <unordered_map>
 #include <typeindex>
+#include "../Utils.hpp"
 #include "../Logger/Logger.h"
 
 const unsigned int VECTOR_INIT = 300;
 const unsigned int MAX_COMPONENTS = 32;
+const unsigned int MAX_TAGS = 32;
 using Signature = std::bitset<MAX_COMPONENTS>;
 
 ////////////////////////////////////////////
@@ -34,6 +36,9 @@ public:
 	bool operator!= (const Entity& other) const { return id != other.id; }
 	bool operator> (const Entity& other) const { return id > other.id; }
 	bool operator< (const Entity& other) const { return id < other.id; }
+
+	void AddTag(Tag tag);
+	bool HasTag(Tag tag);
 };
 
 ////////////////////////////////////////////
@@ -139,6 +144,10 @@ public:
 	template<typename TSystem>
 	TSystem& GetSystem() const;
 
+	//Tag management
+	void AddTagToEntity(Entity entity, Tag tag);
+	bool EntityHasTag(Entity entity, Tag tag);
+
 private:
 	int numOfEntites = 0;
 	//vector index == component type id, pool index == entity id
@@ -153,6 +162,7 @@ private:
 	std::vector<Entity> entitesToBeAdded;
 	std::vector<Entity> entitiesToBeKilled;
 	std::queue<int> freeIDs;
+	std::unordered_map<int, std::bitset<MAX_TAGS>> entityTagSignatures;
 };
 
 ////////////////////////////////////////////
