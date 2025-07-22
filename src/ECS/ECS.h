@@ -145,7 +145,7 @@ public:
 	//Tag management
 	void AddTagToEntity(Entity entity, Tag tag);
 	bool EntityHasTag(Entity entity, Tag tag);
-	std::vector<Entity>& GetEntitiesWithTag(Tag tag);
+	std::vector<Entity>* u_GetEntitiesWithTag(Tag tag);
 
 private:
 	int numOfEntites = 0;

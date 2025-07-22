@@ -138,13 +138,12 @@ bool Registry::EntityHasTag(Entity entity, Tag tag) {
 	return entityTagSignatures[entity.id].test(tag);
 }
 
-std::vector<Entity>& Registry::GetEntitiesWithTag(Tag tag) {
+std::vector<Entity>* Registry::u_GetEntitiesWithTag(Tag tag) {
 	auto it = tagToEntityMap.find(tag);
 	if (it == tagToEntityMap.end()) {
 		Logger::Err("No entity has this tag: " + std::to_string(tag));
-		static std::vector<Entity> empty;
-		return empty;
+		return nullptr;
 	} else {
-		return it->second;
+		return &it->second;
 	}
 }

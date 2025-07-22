@@ -23,11 +23,14 @@ public:
 			ImGui::InputFloat("y position", &yPos);
 
 			if(ImGui::Button("Teleport blue man")) {
-				for (auto entity : registry.GetEntitiesWithTag(Tag::Player)) {
-					auto& transform = entity.GetComponent<TransformComponent>();
+				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
+				if(entities) {
+					for (auto entity : *entities) {
+						auto& transform = entity.GetComponent<TransformComponent>();
 
-					transform.position.x = xPos;
-					transform.position.y = yPos;
+						transform.position.x = xPos;
+						transform.position.y = yPos;
+					}
 				}
 			}
 
@@ -35,9 +38,12 @@ public:
 
 			if(ImGui::Button("Start/Stop")) {
 				walking = !walking;
-				for (auto entity : registry.GetEntitiesWithTag(Tag::Player)) {
-					auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
-					rigidBody.velocity.x = walking ? 100 : 0;
+				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
+				if(entities) {
+					for (auto entity : *entities) {
+						auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
+						rigidBody.velocity.x = walking ? 100 : 0;
+					}
 				}
 			}
 		}
