@@ -4,9 +4,6 @@
 #include "../AssetManager/AssetManager.h"
 #include "../EventSystem/EventBus.hpp"
 
-const int MAX_FPS = 160;
-const int MIN_MS_PER_FRAME = 1000 / MAX_FPS;
-
 class Game {
 public:
 	Game();

@@ -1,0 +1,64 @@
+#pragma once 
+#include <SDL.h>
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_sdl2.h>
+#include <imgui/imgui_impl_sdlrenderer2.h>
+#include "../ECS/ECS.h"
+#include "../Components/TransformComponent.h"
+#include "../Components/RigidBodyComponent.h"
+
+class ImGuiRenderSystem : public System {
+public:
+	ImGuiRenderSystem() = default;
+
+	void Update(SDL_Renderer* renderer, SDL_Rect& camera, Registry& registry) {
+		ImGui_ImplSDLRenderer2_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+
+		if(ImGui::Begin("Blue man teleporter")) {
+			static float xPos;
+			static float yPos;
+			ImGui::InputFloat("x position", &xPos);
+			ImGui::InputFloat("y position", &yPos);
+
+			if(ImGui::Button("Teleport blue man")) {
+				for (auto entity : registry.GetEntitiesWithTag(Tag::Player)) {
+					auto& transform = entity.GetComponent<TransformComponent>();
+
+					transform.position.x = xPos;
+					transform.position.y = yPos;
+				}
+			}
+
+			static bool walking = true;
+
+			if(ImGui::Button("Start/Stop")) {
+				walking = !walking;
+				for (auto entity : registry.GetEntitiesWithTag(Tag::Player)) {
+					auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
+					rigidBody.velocity.x = walking ? 100 : 0;
+				}
+			}
+		}
+		ImGui::End(); //Comment out for demo window
+
+		// Display a small overlay window to display the map position using the mouse
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav;
+		ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always, ImVec2(0, 0));
+		ImGui::SetNextWindowBgAlpha(0.9f);
+		if (ImGui::Begin("Map coordinates", NULL, windowFlags)) {
+			ImGui::Text(
+				"Mouse map coordinates (x=%.1f, y=%.1f)",
+				ImGui::GetIO().MousePos.x + camera.x,
+				ImGui::GetIO().MousePos.y + camera.y
+			);
+		}
+		ImGui::End();
+
+		// ImGui::ShowDemoWindow();
+
+		ImGui::Render();
+		ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), renderer);
+	}
+};

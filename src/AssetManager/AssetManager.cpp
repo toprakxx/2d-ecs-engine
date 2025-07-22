@@ -11,6 +11,7 @@ AssetManager::AssetManager() {
 }
 
 AssetManager::~AssetManager() {
+	ClearAssets();
 	Logger::Confirm("Asset Manager destructed.");
 }
 

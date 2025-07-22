@@ -131,8 +131,20 @@ void Registry::RemoveEntityFromSystems(Entity entity) {
 
 void Registry::AddTagToEntity(Entity entity,Tag tag) {
 	entityTagSignatures[entity.id].set(tag);
+	tagToEntityMap[tag].push_back(entity);
 }
 
 bool Registry::EntityHasTag(Entity entity, Tag tag) {
 	return entityTagSignatures[entity.id].test(tag);
+}
+
+std::vector<Entity>& Registry::GetEntitiesWithTag(Tag tag) {
+	auto it = tagToEntityMap.find(tag);
+	if (it == tagToEntityMap.end()) {
+		Logger::Err("No entity has this tag: " + std::to_string(tag));
+		static std::vector<Entity> empty;
+		return empty;
+	} else {
+		return it->second;
+	}
 }

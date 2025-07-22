@@ -1,5 +1,9 @@
 #include <SDL.h>
 #include <glm/glm.hpp>
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_sdl2.h>
+#include <imgui/imgui_impl_sdlrenderer2.h>
+#include "../Utils.hpp"
 #include "./Game.h"
 #include "../Logger/Logger.h"
 
@@ -11,6 +15,7 @@
 #include "../Systems/CollisionDebugSystem.hpp"
 #include "../Systems/CameraFollowSystem.hpp"
 #include "../Systems/TextRenderSystem.hpp"
+#include "../Systems/ImGuiRenderSystem.hpp"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
@@ -32,7 +37,7 @@ Game::~Game() {
 
 void Game::Initalize() {
 	//Resolution awareness
-	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+	// SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
 	if(SDL_Init(SDL_INIT_EVERYTHING)) {
 		Logger::Err("Error initializing SDL.");
 	} 
@@ -74,6 +79,16 @@ void Game::Initalize() {
 		return;
 	}
 
+	//Setting up ImGui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.FontGlobalScale = 2.0f;
+	ImGui::GetStyle().ScaleAllSizes(2.0f);
+	ImGui_ImplSDL2_InitForSDLRenderer(window, renderer);
+	ImGui_ImplSDLRenderer2_Init(renderer);
+	
+
 	//Initalizing the camera
 	camera.x = 0;
 	camera.y = 0;
@@ -106,6 +121,7 @@ void Game::SetUp() {
 	registry.AddSystem<CollisionDebugSystem>();
 	registry.AddSystem<CameraFollowSystem>();
 	registry.AddSystem<TextRenderSystem>();
+	registry.AddSystem<ImGuiRenderSystem>();
 
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
@@ -119,7 +135,7 @@ void Game::SetUp() {
 	test.AddComponent<CameraFollowComponent>();
 
 	Entity obs = registry.CreateEntity();
-	obs.AddComponent<TransformComponent>(glm::vec2(750.0,350.0), glm::vec2(10), 0.0);
+	obs.AddComponent<TransformComponent>(glm::vec2(950.0,350.0), glm::vec2(10), 0.0);
 	obs.AddComponent<SpriteComponent>("blue-man",16,16);
 	obs.AddComponent<BoxColliderComponent>(160, 160);
 
@@ -131,6 +147,8 @@ void Game::SetUp() {
 void Game::ProcessInput() {
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) {
+		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
+
 		//SDL Core inputs
 		switch (sdlEvent.type) {
 		case SDL_QUIT:
@@ -164,17 +182,26 @@ void Game::Update() {
 }
 
 void Game::Render() {
-	SDL_SetRenderDrawColor(renderer, 76, 187, 32, SDL_ALPHA_OPAQUE);
+	SDL_Color background = {15, 30, 60, SDL_ALPHA_OPAQUE};
+	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b , background.a);
 	SDL_RenderClear(renderer);
 
 	registry.GetSystem<RenderSystem>().Update(renderer, assetManager, camera);
-	registry.GetSystem<CollisionDebugSystem>().Update(renderer, inDebugMode, camera);
 	registry.GetSystem<TextRenderSystem>().Update(renderer, assetManager, camera);
+
+	if(inDebugMode) {
+		registry.GetSystem<CollisionDebugSystem>().Update(renderer, camera);
+		registry.GetSystem<ImGuiRenderSystem>().Update(renderer, camera, registry);
+	}
 
 	SDL_RenderPresent(renderer);
 }
 
 void Game::Destroy() {
+	ImGui_ImplSDLRenderer2_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

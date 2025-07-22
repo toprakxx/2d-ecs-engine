@@ -7,10 +7,8 @@
 #include <typeindex>
 #include "../Utils.hpp"
 #include "../Logger/Logger.h"
+#include "../Utils.hpp"
 
-const unsigned int VECTOR_INIT = 300;
-const unsigned int MAX_COMPONENTS = 32;
-const unsigned int MAX_TAGS = 32;
 using Signature = std::bitset<MAX_COMPONENTS>;
 
 ////////////////////////////////////////////
@@ -147,6 +145,7 @@ public:
 	//Tag management
 	void AddTagToEntity(Entity entity, Tag tag);
 	bool EntityHasTag(Entity entity, Tag tag);
+	std::vector<Entity>& GetEntitiesWithTag(Tag tag);
 
 private:
 	int numOfEntites = 0;
@@ -162,7 +161,9 @@ private:
 	std::vector<Entity> entitesToBeAdded;
 	std::vector<Entity> entitiesToBeKilled;
 	std::queue<int> freeIDs;
+
 	std::unordered_map<int, std::bitset<MAX_TAGS>> entityTagSignatures;
+	std::unordered_map<Tag, std::vector<Entity>> tagToEntityMap;
 };
 
 ////////////////////////////////////////////
