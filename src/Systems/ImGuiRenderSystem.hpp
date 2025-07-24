@@ -5,13 +5,13 @@
 #include <imgui/imgui_impl_sdlrenderer2.h>
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
-#include "../Components/RigidBodyComponent.h"
+#include "../Components/AnimationComponent.h"
 
 class ImGuiRenderSystem : public System {
 public:
 	ImGuiRenderSystem() = default;
 
-	void Update(SDL_Renderer* renderer, SDL_Rect& camera, Registry& registry) {
+	void Update(SDL_Renderer* renderer, SDL_Rect& camera, Registry& registry, double deltaTime) {
 		ImGui_ImplSDLRenderer2_NewFrame();
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
@@ -34,15 +34,14 @@ public:
 				}
 			}
 
-			static bool walking = true;
-
-			if(ImGui::Button("Start/Stop")) {
-				walking = !walking;
+			static bool walkingLeft = true;
+			if(ImGui::Button("Change direction")) {
 				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
 				if(entities) {
 					for (auto entity : *entities) {
-						auto& rigidBody = entity.GetComponent<RigidBodyComponent>();
-						rigidBody.velocity.x = walking ? 100 : 0;
+						auto& animation = entity.GetComponent<AnimationComponent>();
+						animation.currentAnimation = walkingLeft ? animation.animations.at("WalkRight") : animation.animations.at("WalkLeft") ;
+						walkingLeft = !walkingLeft;
 					}
 				}
 			}
@@ -59,6 +58,8 @@ public:
 				ImGui::GetIO().MousePos.x + camera.x,
 				ImGui::GetIO().MousePos.y + camera.y
 			);
+			ImGui::Text(
+				"FPS: %.1f", ImGui::GetIO().Framerate);
 		}
 		ImGui::End();
 

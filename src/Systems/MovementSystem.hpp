@@ -15,12 +15,18 @@ public:
 			TransformComponent& transformComponent = entity.GetComponent<TransformComponent>();
 			RigidBodyComponent& rigidBodyComponent = entity.GetComponent<RigidBodyComponent>();
 
+			//This is a different version of the following: 
+			//speed += accelaration * dt * 0.5
+			//position += velocity * dt
+			//speed += accelaratoin * dt * 0.5
+			//This is the velocity-verlet (aka leapfrog)
+			
+			transformComponent.position.x += (rigidBodyComponent.velocity.x + deltaTime * rigidBodyComponent.acceleration.x / 2) * deltaTime;
+			transformComponent.position.y += (rigidBodyComponent.velocity.y + deltaTime * rigidBodyComponent.acceleration.y / 2) * deltaTime;
+
 			rigidBodyComponent.velocity.x += rigidBodyComponent.acceleration.x * deltaTime;
 			rigidBodyComponent.velocity.y += rigidBodyComponent.acceleration.y * deltaTime;
 
-			transformComponent.position.x += rigidBodyComponent.velocity.x * deltaTime;
-			transformComponent.position.y += rigidBodyComponent.velocity.y * deltaTime;
 		}
 	}
-	
 };

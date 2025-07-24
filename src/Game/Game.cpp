@@ -37,7 +37,7 @@ Game::~Game() {
 
 void Game::Initalize() {
 	//Resolution awareness
-	// SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
 	if(SDL_Init(SDL_INIT_EVERYTHING)) {
 		Logger::Err("Error initializing SDL.");
 	} 
@@ -129,8 +129,12 @@ void Game::SetUp() {
 	test.AddTag(Tag::Player);
 	test.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(10), 0.0);
 	test.AddComponent<SpriteComponent>("blue-man-walk-right",16,16);
-	test.AddComponent<RigidBodyComponent>(glm::vec2(100,0));
-	test.AddComponent<AnimationComponent>(8);
+	test.AddComponent<RigidBodyComponent>(glm::vec2(0), glm::vec2(0));
+	AnimationComponent ac {
+		{"WalkLeft", {0,8}},
+		{"WalkRight", {1,8}}
+	};
+	test.AddComponent<AnimationComponent>(ac);
 	test.AddComponent<BoxColliderComponent>(160, 160);
 	test.AddComponent<CameraFollowComponent>();
 
@@ -141,7 +145,7 @@ void Game::SetUp() {
 
 	Entity text = registry.CreateEntity();
 	SDL_Color white = {255, 255, 255};
-	text.AddComponent<TextComponent>(glm::vec2(810.0, 50.0),"Blue Man Game", "arial-40", white, true);
+	text.AddComponent<TextComponent>(glm::vec2(810.0, 50.0),"Press F1", "arial-40", white, true);
 }
 
 void Game::ProcessInput() {
@@ -182,7 +186,7 @@ void Game::Update() {
 }
 
 void Game::Render() {
-	SDL_Color background = {15, 30, 60, SDL_ALPHA_OPAQUE};
+	SDL_Color background = {150, 150, 0, SDL_ALPHA_OPAQUE};
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b , background.a);
 	SDL_RenderClear(renderer);
 
@@ -191,7 +195,7 @@ void Game::Render() {
 
 	if(inDebugMode) {
 		registry.GetSystem<CollisionDebugSystem>().Update(renderer, camera);
-		registry.GetSystem<ImGuiRenderSystem>().Update(renderer, camera, registry);
+		registry.GetSystem<ImGuiRenderSystem>().Update(renderer, camera, registry, deltaTime);
 	}
 
 	SDL_RenderPresent(renderer);
