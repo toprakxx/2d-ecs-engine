@@ -6,6 +6,7 @@
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/AnimationComponent.h"
+#include "../Components/RigidBodyComponent.h"
 
 class ImGuiRenderSystem : public System {
 public:
@@ -34,8 +35,25 @@ public:
 				}
 			}
 
-			static bool walkingLeft = true;
-			if(ImGui::Button("Change direction")) {
+			static int xVel;
+			static int yVel;
+			ImGui::InputInt("x velocity", &xVel);
+			ImGui::InputInt("y velocity", &yVel);
+
+			if(ImGui::Button("Change velocity")) {
+				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
+				if(entities) {
+					for (auto entity : *entities) {
+						auto& rb = entity.GetComponent<RigidBodyComponent>();
+
+						rb.velocity.x = xVel;
+						rb.velocity.y = yVel;
+					}
+				}
+			}
+
+			static bool walkingLeft = false;
+			if(ImGui::Button("Change animation direction")) {
 				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
 				if(entities) {
 					for (auto entity : *entities) {

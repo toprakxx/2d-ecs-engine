@@ -110,6 +110,7 @@ void Game::Run() {
 void Game::SetUp() {
 	assetManager.AddTexture(renderer, "blue-man", "images/blue-man0.png");
 	assetManager.AddTexture(renderer, "blue-man-walk-right", "images/blue-man-walk-sheet.png");
+	assetManager.AddTexture(renderer, "bird", "images/blue-bird-sheet.png");
 
 	assetManager.AddFont("arial-40", "fonts/arial.ttf", 40);
 
@@ -128,20 +129,28 @@ void Game::SetUp() {
 	Entity player = registry.CreateEntity();
 	player.AddTag(Tag::Player);
 	player.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(10), 0.0);
-	player.AddComponent<SpriteComponent>("blue-man-walk-right",16,16);
+	player.AddComponent<SpriteComponent>("blue-man-walk-right",16,16, 10);
 	player.AddComponent<RigidBodyComponent>(glm::vec2(100, 0), glm::vec2(0));
-	AnimationComponent playerAnimComp {
-		{"WalkLeft", {0,8}},
-		{"WalkRight", {1,8}}
-	};
-	player.AddComponent<AnimationComponent>(playerAnimComp);
+	player.AddComponent<AnimationComponent>(AnimationComponent{
+		{"WalkRight", {1,8}},
+		{"WalkLeft", {0,8}}
+	});
 	player.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
 	player.AddComponent<CameraFollowComponent>();
 
 	Entity man = registry.CreateEntity();
 	man.AddComponent<TransformComponent>(glm::vec2(950.0,350.0), glm::vec2(10), 0.0);
 	man.AddComponent<SpriteComponent>("blue-man",16,16);
-	man.AddComponent<ColliderComponent>(Collider::Circle, 160, 160);
+	man.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
+	
+	Entity bird = registry.CreateEntity();
+	bird.AddComponent<TransformComponent>(glm::vec2(750, 200), glm::vec2(10), 0.0);
+	bird.AddComponent<SpriteComponent>("bird", 16, 16);
+	bird.AddComponent<AnimationComponent>(AnimationComponent{
+		{"Flap", {0,5}},
+		{"Idle", {1,5}}
+	});
+	bird.AddComponent<ColliderComponent>(Collider::Circle, 80);
 
 	Entity text = registry.CreateEntity();
 	SDL_Color white = {255, 255, 255};
@@ -168,10 +177,10 @@ void Game::ProcessInput() {
 
 void Game::Update() {
 	//Limiting the FPS
-	// int timeToWait = MIN_MS_PER_FRAME - (SDL_GetTicks64() - msPassedUntilLastFrame);
-	// if (timeToWait > 0 && timeToWait <= MIN_MS_PER_FRAME) {
-	// 	SDL_Delay(timeToWait);
-	// }
+	int timeToWait = MIN_MS_PER_FRAME - (SDL_GetTicks64() - msPassedUntilLastFrame);
+	if (timeToWait > 0 && timeToWait <= MIN_MS_PER_FRAME) {
+		SDL_Delay(timeToWait);
+	}
 
 	registry.Update();
 
