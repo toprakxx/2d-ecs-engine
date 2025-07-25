@@ -1,7 +1,7 @@
 #pragma once
 #include <initializer_list>
 #include <unordered_map>
-#include <string>
+#include <string_view>
 
 // struct AnimationComponent {
 // 	AnimationComponent(int frameCount = 0, int frameRate = 12)
@@ -42,11 +42,11 @@ struct AnimationClip {
 
 struct AnimationComponent {
 	AnimationComponent() = default;
-	AnimationComponent(std::initializer_list<std::pair<const std::string, AnimationClip>> init)
+	AnimationComponent(std::initializer_list<std::pair<const std::string_view, AnimationClip>> init)
 	: animations(init)
 	, currentAnimation(animations.begin()->second)
 	{};
 
-	std::unordered_map<std::string, AnimationClip> animations;
+	std::unordered_map<std::string_view, AnimationClip> animations;
 	AnimationClip currentAnimation;
 };

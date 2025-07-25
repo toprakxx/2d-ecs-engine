@@ -125,23 +125,23 @@ void Game::SetUp() {
 
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
-	Entity test = registry.CreateEntity();
-	test.AddTag(Tag::Player);
-	test.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(10), 0.0);
-	test.AddComponent<SpriteComponent>("blue-man-walk-right",16,16);
-	test.AddComponent<RigidBodyComponent>(glm::vec2(0), glm::vec2(0));
-	AnimationComponent ac {
+	Entity player = registry.CreateEntity();
+	player.AddTag(Tag::Player);
+	player.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(10), 0.0);
+	player.AddComponent<SpriteComponent>("blue-man-walk-right",16,16);
+	player.AddComponent<RigidBodyComponent>(glm::vec2(100, 0), glm::vec2(0));
+	AnimationComponent playerAnimComp {
 		{"WalkLeft", {0,8}},
 		{"WalkRight", {1,8}}
 	};
-	test.AddComponent<AnimationComponent>(ac);
-	test.AddComponent<BoxColliderComponent>(160, 160);
-	test.AddComponent<CameraFollowComponent>();
+	player.AddComponent<AnimationComponent>(playerAnimComp);
+	player.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
+	player.AddComponent<CameraFollowComponent>();
 
-	Entity obs = registry.CreateEntity();
-	obs.AddComponent<TransformComponent>(glm::vec2(950.0,350.0), glm::vec2(10), 0.0);
-	obs.AddComponent<SpriteComponent>("blue-man",16,16);
-	obs.AddComponent<BoxColliderComponent>(160, 160);
+	Entity man = registry.CreateEntity();
+	man.AddComponent<TransformComponent>(glm::vec2(950.0,350.0), glm::vec2(10), 0.0);
+	man.AddComponent<SpriteComponent>("blue-man",16,16);
+	man.AddComponent<ColliderComponent>(Collider::Circle, 160, 160);
 
 	Entity text = registry.CreateEntity();
 	SDL_Color white = {255, 255, 255};

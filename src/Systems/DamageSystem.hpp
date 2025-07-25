@@ -7,7 +7,7 @@
 class DamageSystem : public System {
 public:
 	DamageSystem() {
-		RequireComponent<BoxColliderComponent>();
+		RequireComponent<ColliderComponent>();
 	}
 
 	void SubscribeToEvents(EventBus& eventBus) {

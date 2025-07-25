@@ -3,7 +3,12 @@
 enum Tag {
 	Player,
 	Enemy,
-	Obstacle
+	Obstacle,
+};
+
+enum Collider {
+	Box,
+	Circle,
 };
 
 const unsigned int VECTOR_INIT = 300;
