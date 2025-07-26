@@ -1,6 +1,7 @@
 #pragma once
 #include "../ECS/ECS.h"
 #include "../InputManager/InputManager.h"
+#include "../Systems/AnimationSystem.hpp"
 #include "../Components/PlayerControlComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
@@ -26,8 +27,8 @@ public:
 
 			rb.velocity.x = hAxis * pcc.playerSpeed;
 
-			if(input.isKeyPressed(KEY_A)) anim.currentAnimation = anim.animations.at("WalkLeft");
-			if(input.isKeyPressed(KEY_D)) anim.currentAnimation = anim.animations.at("WalkRight");
+			if(input.isKeyPressed(KEY_A)) ChangeAnimation(e, "WalkLeft");
+			if(input.isKeyPressed(KEY_D)) ChangeAnimation(e, "WalkRight");
 		}
 	}
 };

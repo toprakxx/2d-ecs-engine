@@ -18,11 +18,20 @@ public:
 
 			animation.frameTimer -= deltaTime;
 			if(animation.frameTimer <= 0) {
+				sprite.srcRect.y = sprite.height * animation.sheetIndex;
 				animation.currentFrame = (animation.currentFrame + 1 ) % animation.animationFrameCount;
 				sprite.srcRect.x = sprite.width * animation.currentFrame;
-				sprite.srcRect.y = sprite.height * animation.sheetIndex;
 				animation.frameTimer = animation.secondsPerAnimationFrame;
 			}
 		}
+	}
+};
+
+inline void ChangeAnimation(Entity& entity, std::string_view name) {
+	auto& animComp = entity.GetComponent<AnimationComponent>();
+
+	if(animComp.currentAnimation.sheetIndex != animComp.animations.at(name).sheetIndex) {
+		animComp.currentAnimation = animComp.animations.at(name);
+		animComp.currentAnimation.currentFrame = 0;
 	}
 };
