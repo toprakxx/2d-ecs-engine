@@ -3,6 +3,7 @@
 #include "../ECS/ECS.h"
 #include "../AssetManager/AssetManager.h"
 #include "../EventSystem/EventBus.hpp"
+#include "../InputManager/InputManager.h"
 
 class Game {
 public:
@@ -33,4 +34,5 @@ private:
 	AssetManager assetManager;
 	EventBus eventBus;
 	SDL_Rect camera;
+	InputManager inputManager;
 };

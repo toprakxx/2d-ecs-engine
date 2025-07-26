@@ -44,11 +44,12 @@ public:
 
 				//Segment number for the circle
 				const int N = 32;
-				const float angleStep = 2.0f;
 				std::array<SDL_Point, N+1> points;
 
+				//Placing the dots via their polar coords
 				for (int i = 0; i <= N; i++){
-					float pAngle = (angleStep * float(M_PI) * i) / N;
+					//The increasing radian
+					float pAngle = (2.0f * float(M_PI) * i) / N;
 					points[i] = {
 						centerX + int(std::cos(pAngle) * r),
 						centerY + int(std::sin(pAngle) * r)

@@ -28,7 +28,7 @@ void AssetManager::ClearAssets() {
 }
 
 void AssetManager::AddTexture(SDL_Renderer* renderer, const std::string_view& assetName, const std::string& filePath) { 
-	auto address = ASSETS_PATH + filePath;
+	auto address = ASSETS_PATH"images/"+ filePath;
 	SDL_Surface* surface = IMG_Load(address.c_str());
 	if(!surface) Logger::Err("Failed to load image at: " + address);
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -43,7 +43,7 @@ SDL_Texture* AssetManager::GetTexture(const std::string& assetName) {
 }
 
 void AssetManager::AddFont(const std::string_view& fontName, const std::string& filePath, int fontSize) {
-	auto address = ASSETS_PATH + filePath;
+	auto address = ASSETS_PATH"fonts/" + filePath;
 	TTF_Font* font = TTF_OpenFont(address.c_str(), fontSize);
 	if(!font) Logger::Err("Failed to load font at: " + address + " .With possible error: " + TTF_GetError());
 	fonts.emplace(fontName, font);

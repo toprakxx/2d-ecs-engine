@@ -16,6 +16,7 @@
 #include "../Systems/CameraFollowSystem.hpp"
 #include "../Systems/TextRenderSystem.hpp"
 #include "../Systems/ImGuiRenderSystem.hpp"
+#include "../Systems/PlayerControllerSystem.hpp"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
@@ -23,6 +24,7 @@
 #include "../Components/AnimationComponent.h"
 #include "../Components/CameraFollowComponent.h"
 #include "../Components/TextComponent.h"
+#include "../Components/PlayerControlComponent.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -108,11 +110,11 @@ void Game::Run() {
 }
 
 void Game::SetUp() {
-	assetManager.AddTexture(renderer, "blue-man", "images/blue-man0.png");
-	assetManager.AddTexture(renderer, "blue-man-walk-right", "images/blue-man-walk-sheet.png");
-	assetManager.AddTexture(renderer, "bird", "images/blue-bird-sheet.png");
+	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
+	assetManager.AddTexture(renderer, "blue-man-walk-right", "blue-man-walk-sheet.png");
+	assetManager.AddTexture(renderer, "bird", "blue-bird-sheet.png");
 
-	assetManager.AddFont("arial-40", "fonts/arial.ttf", 40);
+	assetManager.AddFont("arial-40", "arial.ttf", 40);
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
@@ -123,6 +125,7 @@ void Game::SetUp() {
 	registry.AddSystem<CameraFollowSystem>();
 	registry.AddSystem<TextRenderSystem>();
 	registry.AddSystem<ImGuiRenderSystem>();
+	registry.AddSystem<PlayerControllerSystem>();
 
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
@@ -137,6 +140,7 @@ void Game::SetUp() {
 	});
 	player.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
 	player.AddComponent<CameraFollowComponent>();
+	player.AddComponent<PlayerControlComponent>(250);
 
 	Entity man = registry.CreateEntity();
 	man.AddComponent<TransformComponent>(glm::vec2(950.0,350.0), glm::vec2(10), 0.0);
@@ -159,6 +163,7 @@ void Game::SetUp() {
 
 void Game::ProcessInput() {
 	SDL_Event sdlEvent;
+	inputManager.BeginFrame();
 	while (SDL_PollEvent(&sdlEvent)) {
 		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 
@@ -170,9 +175,14 @@ void Game::ProcessInput() {
 		case SDL_KEYDOWN:
 			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) isGameRunning = false;
 			if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
+			inputManager.KeyPressed(sdlEvent.key.keysym.scancode);
 			break;
+		case SDL_KEYUP:
+			inputManager.KeyReleased(sdlEvent.key.keysym.scancode);
 		}
 	}
+	//System dependent on input get updated here
+	registry.GetSystem<PlayerControllerSystem>().Update(inputManager);
 }
 
 void Game::Update() {
@@ -199,6 +209,7 @@ void Game::Render() {
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b , background.a);
 	SDL_RenderClear(renderer);
 
+	//Systems dependent on rendering get updated here
 	registry.GetSystem<RenderSystem>().Update(renderer, assetManager, camera);
 	registry.GetSystem<TextRenderSystem>().Update(renderer, assetManager, camera);
 

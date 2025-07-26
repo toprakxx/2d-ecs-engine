@@ -7,6 +7,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/AnimationComponent.h"
 #include "../Components/RigidBodyComponent.h"
+#include "../Components/PlayerControlComponent.h"
 
 class ImGuiRenderSystem : public System {
 public:
@@ -35,31 +36,16 @@ public:
 				}
 			}
 
-			static int xVel;
-			static int yVel;
-			ImGui::InputInt("x velocity", &xVel);
-			ImGui::InputInt("y velocity", &yVel);
+			static int playerSpeed;
+			ImGui::InputInt("Player speed", &playerSpeed);
 
-			if(ImGui::Button("Change velocity")) {
+			if(ImGui::Button("Change speed")) {
 				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
 				if(entities) {
 					for (auto entity : *entities) {
-						auto& rb = entity.GetComponent<RigidBodyComponent>();
+						auto& pControl = entity.GetComponent<PlayerControlComponent>();
 
-						rb.velocity.x = xVel;
-						rb.velocity.y = yVel;
-					}
-				}
-			}
-
-			static bool walkingLeft = false;
-			if(ImGui::Button("Change animation direction")) {
-				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
-				if(entities) {
-					for (auto entity : *entities) {
-						auto& animation = entity.GetComponent<AnimationComponent>();
-						animation.currentAnimation = walkingLeft ? animation.animations.at("WalkRight") : animation.animations.at("WalkLeft") ;
-						walkingLeft = !walkingLeft;
+						pControl.playerSpeed = playerSpeed;
 					}
 				}
 			}
