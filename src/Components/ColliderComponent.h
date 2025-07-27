@@ -19,6 +19,5 @@ struct ColliderComponent
 	int w_r;
 	int h;
 	glm::vec2 offset;
-	bool isEnabled;
 	bool inCollision;
 };

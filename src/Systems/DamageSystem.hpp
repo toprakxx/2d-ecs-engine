@@ -1,6 +1,6 @@
 #pragma once
 #include "../ECS/ECS.h"
-#include "../Components/BoxColliderComponent.h"
+#include "../Components/ColliderComponent.h"
 #include "../EventSystem/EventBus.hpp"
 #include "../EventSystem/Events/CollisionEvent.h"
 

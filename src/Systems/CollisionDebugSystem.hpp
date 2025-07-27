@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
-#include "../Components/BoxColliderComponent.h"
+#include "../Components/ColliderComponent.h"
 #include "../Components/SpriteComponent.h"
 
 class CollisionDebugSystem : public System {
@@ -24,7 +24,7 @@ public:
 				glm::vec2 centerOffset = glm::vec2(collider.w_r);
 
 				if(entity.HasComponent<SpriteComponent>()) {
-					const auto sprite = entity.GetComponent<SpriteComponent>();
+					const auto& sprite = entity.GetComponent<SpriteComponent>();
 					centerOffset = glm::vec2((sprite.width * transform.scale.x)/2.0);
 				}
 

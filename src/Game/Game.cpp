@@ -25,6 +25,7 @@
 #include "../Components/CameraFollowComponent.h"
 #include "../Components/TextComponent.h"
 #include "../Components/PlayerControlComponent.h"
+#include "glm/fwd.hpp"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -138,14 +139,14 @@ void Game::SetUp() {
 		{"WalkRight", {1,8}},
 		{"WalkLeft", {0,8}}
 	});
-	player.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
+	// player.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
 	player.AddComponent<CameraFollowComponent>();
 	player.AddComponent<PlayerControlComponent>(250);
 
 	Entity man = registry.CreateEntity();
 	man.AddComponent<TransformComponent>(glm::vec2(950.0,350.0), glm::vec2(10), 0.0);
 	man.AddComponent<SpriteComponent>("blue-man",16,16);
-	man.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
+	// man.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
 	
 	Entity bird = registry.CreateEntity();
 	bird.AddComponent<TransformComponent>(glm::vec2(750, 200), glm::vec2(10), 0.0);
@@ -159,6 +160,20 @@ void Game::SetUp() {
 	Entity text = registry.CreateEntity();
 	SDL_Color white = {255, 255, 255};
 	text.AddComponent<TextComponent>(glm::vec2(810.0, 50.0),"Press F1", "arial-40", white, true);
+
+	for (int i = 0; i < 100; i++) {
+		Entity testBird0 = registry.CreateEntity();
+		testBird0.AddComponent<TransformComponent>(glm::vec2(300*i, 500.0), glm::vec2(10), 0.0);
+		testBird0.AddComponent<SpriteComponent>("bird", 16, 16);
+		testBird0.AddComponent<AnimationComponent>(AnimationComponent{
+			{"Flap", {0,5}},
+			{"Idle", {1,5}}
+		});
+		testBird0.AddComponent<ColliderComponent>(Collider::Circle, 80 * (i/5.0));
+		int speed = (i % 2 == 0) ? 50 : -50;
+		testBird0.AddComponent<RigidBodyComponent>(glm::vec2(speed, 0), glm::vec2(0));
+	}
+	
 }
 
 void Game::ProcessInput() {
