@@ -6,7 +6,6 @@
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/ColliderComponent.h"
-#include "../Components/SpriteComponent.h"
 
 class CollisionDebugSystem : public System {
 public:
@@ -21,26 +20,17 @@ public:
 			const auto& collider = entity.GetComponent<ColliderComponent>();
 
 			if(collider.type == Circle) {
-				glm::vec2 centerOffset = glm::vec2(collider.w_r);
-
-				if(entity.HasComponent<SpriteComponent>()) {
-					const auto& sprite = entity.GetComponent<SpriteComponent>();
-					centerOffset = glm::vec2((sprite.width * transform.scale.x)/2.0);
-				}
-
 				int centerX = (
 					transform.position.x
-					+ centerOffset.x
 					+ collider.offset.x
 					- camera.x
 				);
 				int centerY = (
 					transform.position.y
-					+ centerOffset.y
 					+ collider.offset.y
 					- camera.y
 				);
-				int r = collider.w_r;
+				int r = collider.width_2r/2;
 
 				//Segment number for the circle
 				const int N = 32;
@@ -70,8 +60,8 @@ public:
 			SDL_Rect colliderRect = {
 				static_cast<int>(transform.position.x + collider.offset.x - camera.x),
 				static_cast<int>(transform.position.y + collider.offset.y - camera.y),
-				static_cast<int>(collider.w_r),
-				static_cast<int>(collider.h)
+				static_cast<int>(collider.width_2r),
+				static_cast<int>(collider.height)
 			};
 			if (collider.inCollision) {
 				SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);

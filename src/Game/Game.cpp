@@ -139,14 +139,14 @@ void Game::SetUp() {
 		{"WalkRight", {1,8}},
 		{"WalkLeft", {0,8}}
 	});
-	// player.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
+	player.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(0), 160, 160);
 	player.AddComponent<CameraFollowComponent>();
 	player.AddComponent<PlayerControlComponent>(250);
 
 	Entity man = registry.CreateEntity();
 	man.AddComponent<TransformComponent>(glm::vec2(950.0,350.0), glm::vec2(10), 0.0);
 	man.AddComponent<SpriteComponent>("blue-man",16,16);
-	// man.AddComponent<ColliderComponent>(Collider::Box, 160, 160);
+	man.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(0), 160, 160);
 	
 	Entity bird = registry.CreateEntity();
 	bird.AddComponent<TransformComponent>(glm::vec2(750, 200), glm::vec2(10), 0.0);
@@ -155,7 +155,7 @@ void Game::SetUp() {
 		{"Flap", {0,5}},
 		{"Idle", {1,5}}
 	});
-	bird.AddComponent<ColliderComponent>(Collider::Circle, 80);
+	bird.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 160);
 
 	Entity text = registry.CreateEntity();
 	SDL_Color white = {255, 255, 255};
@@ -169,7 +169,7 @@ void Game::SetUp() {
 			{"Flap", {0,5}},
 			{"Idle", {1,5}}
 		});
-		testBird0.AddComponent<ColliderComponent>(Collider::Circle, 80 * (i/5.0));
+		testBird0.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 160 * (i/5.0));
 		int speed = (i % 2 == 0) ? 50 : -50;
 		testBird0.AddComponent<RigidBodyComponent>(glm::vec2(speed, 0), glm::vec2(0));
 	}

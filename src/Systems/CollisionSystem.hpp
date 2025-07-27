@@ -4,10 +4,10 @@
 #include "../ECS/ECS.h"
 #include "../Components/ColliderComponent.h"
 #include "../Components/TransformComponent.h"
-#include "../Components/SpriteComponent.h"
 #include "../EventSystem/EventBus.hpp"
 #include "../EventSystem/Events/CollisionEvent.h"
-#include "glm/geometric.hpp"
+#include "glm/detail/qualifier.hpp"
+#include "glm/fwd.hpp"
 
 //NOTE: Add a "TriggerBox" system to compansate for making SpriteComponent mandatory for this system.
 //NOTE: Collision offset is lacking consideration durint SAP
@@ -19,8 +19,10 @@ public:
 	CollisionSystem() {
 		RequireComponent<ColliderComponent>();
 		RequireComponent<TransformComponent>();
-		RequireComponent<SpriteComponent>();
 	}
+
+	//For box colliders position of the entity + collider offset is the upper left corner
+	//For circle colliders position of the entity + collider offset is the middle of the circle
 
 	//https://leanrada.com/notes/sweep-and-prune
 	//https://leanrada.com/notes/sweep-and-prune-2
@@ -29,51 +31,42 @@ public:
 		for (auto entity : entities) entity.GetComponent<ColliderComponent>().inCollision = false;
 
 		std::sort(entities.begin(), entities.end(), [](Entity a, Entity b) {
-			const auto& at = a.GetComponent<TransformComponent>();
-			const auto& ac = a.GetComponent<ColliderComponent>();
-			const auto& as = a.GetComponent<SpriteComponent>();
-			const auto& bt = b.GetComponent<TransformComponent>();
-			const auto& bc = b.GetComponent<ColliderComponent>();
-			const auto& bs = b.GetComponent<SpriteComponent>();
+			const auto& aTrns = a.GetComponent<TransformComponent>();
+			const auto& aColl = a.GetComponent<ColliderComponent>();
+			const auto& bTrns = b.GetComponent<TransformComponent>();
+			const auto& bColl = b.GetComponent<ColliderComponent>();
 
-			auto aLeft = (ac.type == Collider::Circle)
-				? at.position.x + (as.width/2.0 * at.scale.x) - ac.w_r
-				: at.position.x + (as.width/2.0 * at.scale.x) - (ac.w_r/2.0);
-
-			auto bLeft = (bc.type == Collider::Circle)
-				? bt.position.x + (bs.width/2.0 * bt.scale.x) - bc.w_r
-				: bt.position.x + (bs.width/2.0 * bt.scale.x) - (bc.w_r/2.0);
+			auto aLeft = aTrns.position.x + aColl.offset.x;
+			if (aColl.type == Circle) aLeft -= aColl.width_2r/2.0;
+			auto bLeft = bTrns.position.x + bColl.offset.x;
+			if (bColl.type == Circle) bLeft -= bColl.width_2r/2.0;
 
 			return aLeft < bLeft;
 		});
 		
 		for (auto i = entities.begin(); i != entities.end(); i++) { 
 			Entity a = *i;
-			auto at = a.GetComponent<TransformComponent>();
-			auto& ac = a.GetComponent<ColliderComponent>();
-			const auto& as = a.GetComponent<SpriteComponent>();
+			auto aTrns = a.GetComponent<TransformComponent>();
+			auto& aColl = a.GetComponent<ColliderComponent>();
 
 			for (auto j = std::next(i); j != entities.end(); j++) {
 				Entity b = *j;
-				auto bt = b.GetComponent<TransformComponent>();
-				auto& bc = b.GetComponent<ColliderComponent>();
-				const auto& bs = b.GetComponent<SpriteComponent>();
+				auto bTrns = b.GetComponent<TransformComponent>();
+				auto& bColl = b.GetComponent<ColliderComponent>();
 
-				auto aRight = (ac.type == Collider::Circle)
-					? at.position.x + (as.width/2.0 * at.scale.x) + ac.w_r
-					: at.position.x + (as.width/2.0 * at.scale.x) + (ac.w_r/2.0);
-
-				auto bLeft = (bc.type == Collider::Circle)
-					? bt.position.x + (bs.width/2.0 * bt.scale.x) - bc.w_r
-					: bt.position.x + (bs.width/2.0 * bt.scale.x) - (bc.w_r/2.0);
+				auto bLeft = bTrns.position.x + bColl.offset.x;
+				if (bColl.type == Circle) bLeft -= bColl.width_2r/2.0;
+				auto aRight = aTrns.position.x + aColl.offset.x;
+				if (aColl.type == Circle) aRight += aColl.width_2r/2.0;
+				else aRight += aColl.width_2r;
 
 				if (bLeft > aRight) break;
 
 				bool collisionHappened = CheckCollision(a,b);
 
 				if (collisionHappened) {
-					ac.inCollision = true;
-					bc.inCollision = true;
+					aColl.inCollision = true;
+					bColl.inCollision = true;
 					eventBus.EmitEvent<CollisionEvent>(a, b);
 					// Logger::Log("Collision between: " + std::to_string(a.id) + ", " + std::to_string(b.id));
 				}
@@ -82,36 +75,41 @@ public:
 	}
 
 	bool CheckCollision(Entity& a, Entity& b) {
-		TransformComponent at = a.GetComponent<TransformComponent>();
-		ColliderComponent ac = a.GetComponent<ColliderComponent>();
-		TransformComponent bt = b.GetComponent<TransformComponent>();
-		ColliderComponent bc = b.GetComponent<ColliderComponent>();
+		TransformComponent aTrns = a.GetComponent<TransformComponent>();
+		ColliderComponent aColl = a.GetComponent<ColliderComponent>();
+		TransformComponent bTrns = b.GetComponent<TransformComponent>();
+		ColliderComponent bColl = b.GetComponent<ColliderComponent>();
 
-		Collider aType = ac.type;
-		Collider bType = bc.type;
+		Collider aType = aColl.type;
+		Collider bType = bColl.type;
 
 		switch(aType) {
+			//NOTE:This needs inspection
+			//AABB Collision
 			case Collider::Box: {
 				if(bType == Box) {
-					//X-axis collision
-					bool collisionX = at.position.x + ac.w_r >= bt.position.x &&
-						bt.position.x + bc.w_r >= at.position.x;
-					//Y-axis collision
-					bool collisionY = at.position.y + ac.h >= bt.position.y &&
-						bt.position.y + bc.h >= at.position.y;
+					double aX = aTrns.position.x + aColl.offset.x;
+					double aY = aTrns.position.y + aColl.offset.y;
+					double bX = bTrns.position.x + bColl.offset.x;
+					double bY = bTrns.position.y + bColl.offset.y;
 
-					return collisionX && collisionY;
+					return (
+						aX < bX + bColl.width_2r and
+						aX + aColl.width_2r > bX and
+						aY < bY + bColl.height and
+						aY + aColl.height > bY
+					);
 				} 
 				//b is Circle
 				return CircleAndBoxCollision(b,a);
 			} break;
 
+			//Circle-Circle Collsion
 			case Collider::Circle: {
 				if(bType == Circle) {
-					glm::vec2 aCenter = at.position + glm::vec2(a.GetComponent<SpriteComponent>().width * at.scale.x / 2.0f);
-					glm::vec2 bCenter = bt.position + glm::vec2(b.GetComponent<SpriteComponent>().width * bt.scale.x / 2.0f);
-
-					float combinedR = ac.w_r + bc.w_r;
+					glm::vec2 aCenter = aTrns.position + aColl.offset;
+					glm::vec2 bCenter = bTrns.position + bColl.offset;
+					float combinedR = (aColl.width_2r + bColl.width_2r)/2.0;
 
 					return glm::distance(aCenter, bCenter) < combinedR;
 				}
@@ -126,20 +124,21 @@ public:
 
 	//https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
 	bool CircleAndBoxCollision(Entity& a, Entity& b) {
-		TransformComponent& at = a.GetComponent<TransformComponent>();
-		ColliderComponent& ac = a.GetComponent<ColliderComponent>();
-		TransformComponent& bt = b.GetComponent<TransformComponent>();
-		ColliderComponent& bc = b.GetComponent<ColliderComponent>();
+		TransformComponent& aTrns = a.GetComponent<TransformComponent>();
+		ColliderComponent& aColl = a.GetComponent<ColliderComponent>();
+		TransformComponent& bTrns = b.GetComponent<TransformComponent>();
+		ColliderComponent& bColl = b.GetComponent<ColliderComponent>();
 
-		glm::vec2 circleCenter = at.position + glm::vec2((a.GetComponent<SpriteComponent>().width * at.scale.x) / 2.0f);
-		glm::vec2 boxCenter = glm::vec2(bt.position.x + bc.w_r/2.0, bt.position.y + bc.h/2.0);
-		glm::vec2 boxHalfExtends = glm::vec2(bc.w_r/2.0, bc.h/2.0);
+		glm::vec2 circleCenter = aTrns.position + aColl.offset;
+		glm::vec2 boxCenter = bTrns.position + bColl.offset + 
+			glm::vec2(bColl.width_2r/2.0, bColl.height/2.0);
+		glm::vec2 boxHalfExtends = glm::vec2(bColl.width_2r/2.0, bColl.height/2.0);
 
 		glm::vec2 difference = circleCenter - boxCenter;
 		glm::vec2 clamped = glm::clamp(difference, -boxHalfExtends, boxHalfExtends);
 		glm::vec2 closest = boxCenter + clamped;
 		difference = closest - circleCenter;
 
-		return glm::length(difference) < ac.w_r;
+		return glm::length(difference) < aColl.width_2r/2.0;
 	}
 };
