@@ -6,13 +6,8 @@
 #include "../Components/TransformComponent.h"
 #include "../EventSystem/EventBus.hpp"
 #include "../EventSystem/Events/CollisionEvent.h"
-#include "glm/detail/qualifier.hpp"
-#include "glm/fwd.hpp"
 
-//NOTE: Add a "TriggerBox" system to compansate for making SpriteComponent mandatory for this system.
-//NOTE: Collision offset is lacking consideration durint SAP
 //NOTE: Change circle collider from taking in the radius to taking in the diameter to simplify this and the debug system
-//NOTE: This whole code could really use a clean up to reduce repetitin and such
 
 class CollisionSystem : public System {
 public:
@@ -84,7 +79,6 @@ public:
 		Collider bType = bColl.type;
 
 		switch(aType) {
-			//NOTE:This needs inspection
 			//AABB Collision
 			case Collider::Box: {
 				if(bType == Box) {
