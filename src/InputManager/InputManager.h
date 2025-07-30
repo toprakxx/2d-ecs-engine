@@ -1,20 +1,44 @@
 #pragma once
 #include <bitset>
 #include <SDL_scancode.h>
+#include <glm/glm.hpp>
+#include "../Utils.hpp"
+#include "SDL_mouse.h"
+#include "SDL_stdinc.h"
+
+//NOTE: Add mouse wheel support to mouse inputs
 
 class InputManager {
 public:
 	void BeginFrame();
+
 	void KeyPressed(SDL_Scancode k);
 	void KeyReleased(SDL_Scancode k);
-	bool isKeyDown(SDL_Scancode k);
-	bool isKeyPressed(SDL_Scancode k);
-	bool isKeyReleased(SDL_Scancode k);
+	bool isKeyDown(SDL_Scancode k) const;
+	bool isKeyPressed(SDL_Scancode k) const;
+	bool isKeyReleased(SDL_Scancode k) const;
+
+	void MousePressed(Uint8 b);
+	void MouseReleased(Uint8 b);
+	bool isMouseDown(Uint8 b) const;
+	bool isMousePressed(Uint8 b) const;
+	bool isMouseReleased(Uint8 b) const;
+
+	void SetMousePosition(int x, int y);
+	glm::vec2 GetMousePosition() const;
 
 private:
-	std::bitset<SDL_NUM_SCANCODES> currentFrame;
-	std::bitset<SDL_NUM_SCANCODES> lastFrame;
+	std::bitset<SDL_NUM_SCANCODES> kbCurrentFrame;
+	std::bitset<SDL_NUM_SCANCODES> kbLastFrame;
+
+	std::bitset<MAX_MOUSE_BUTTONS> mouseCurrentFrame;
+	std::bitset<MAX_MOUSE_BUTTONS> mouseLastFrame;
+
+	int mouseXPos, mouseYPos;
 };
+
+constexpr Uint8 MOUSE_R = SDL_BUTTON_RIGHT;
+constexpr Uint8 MOUSE_L = SDL_BUTTON_LEFT;
 
 constexpr SDL_Scancode KEY_A = SDL_SCANCODE_A;
 constexpr SDL_Scancode KEY_B = SDL_SCANCODE_B;

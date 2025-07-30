@@ -17,6 +17,7 @@
 #include "../Systems/TextRenderSystem.hpp"
 #include "../Systems/ImGuiRenderSystem.hpp"
 #include "../Systems/PlayerControllerSystem.hpp"
+#include "../Systems/UIButtonSystem.hpp"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
@@ -25,7 +26,8 @@
 #include "../Components/CameraFollowComponent.h"
 #include "../Components/TextComponent.h"
 #include "../Components/PlayerControlComponent.h"
-#include "glm/fwd.hpp"
+#include "../Components/UIButtonComponent.h"
+#include "SDL_events.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -54,10 +56,12 @@ void Game::Initalize() {
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	printf("SDL sees desktop as %dx%d\n", displayMode.w, displayMode.h);
 
-	windowWidth = 1920;
+	// windowWidth = 1920;
+	windowWidth = 960;
 	//windowWidth = displayMode.w;
 
-	windowHeight = 1080;
+	// windowHeight = 1080;
+	windowHeight = 540;
 	//windowHeight = displayMode.h;
 
 	window = SDL_CreateWindow(
@@ -127,6 +131,7 @@ void Game::SetUp() {
 	registry.AddSystem<TextRenderSystem>();
 	registry.AddSystem<ImGuiRenderSystem>();
 	registry.AddSystem<PlayerControllerSystem>();
+	registry.AddSystem<UIButtonSystem>();
 
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
@@ -147,6 +152,9 @@ void Game::SetUp() {
 	man.AddComponent<TransformComponent>(glm::vec2(950.0,350.0), glm::vec2(10), 0.0);
 	man.AddComponent<SpriteComponent>("blue-man",16,16);
 	man.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(0), 160, 160);
+	man.AddComponent<UIButtonComponent>(160,160,[](){
+		Logger::Log("Man clicked.");
+	});
 	
 	Entity bird = registry.CreateEntity();
 	bird.AddComponent<TransformComponent>(glm::vec2(750, 200), glm::vec2(10), 0.0);
@@ -194,10 +202,20 @@ void Game::ProcessInput() {
 			break;
 		case SDL_KEYUP:
 			inputManager.KeyReleased(sdlEvent.key.keysym.scancode);
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			inputManager.MousePressed(sdlEvent.button.button);
+			break;
+		case SDL_MOUSEBUTTONUP:
+			inputManager.MouseReleased(sdlEvent.button.button);
+			break;
+		case SDL_MOUSEMOTION:
+			inputManager.SetMousePosition(sdlEvent.motion.x, sdlEvent.motion.y);
 		}
 	}
 	//System dependent on input get updated here
 	registry.GetSystem<PlayerControllerSystem>().Update(inputManager);
+	registry.GetSystem<UIButtonSystem>().Update(eventBus, camera, inputManager);
 }
 
 void Game::Update() {

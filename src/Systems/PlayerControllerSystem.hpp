@@ -16,7 +16,7 @@ public:
 		RequireComponent<AnimationComponent>();
 	}
 
-	void Update(InputManager input) {
+	void Update(const InputManager& input) {
 		int hAxis = 0;
 		hAxis += input.isKeyDown(KEY_D) ? 1 : 0;
 		hAxis -= input.isKeyDown(KEY_A) ? 1 : 0;
