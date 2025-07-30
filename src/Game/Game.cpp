@@ -56,12 +56,12 @@ void Game::Initalize() {
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	printf("SDL sees desktop as %dx%d\n", displayMode.w, displayMode.h);
 
-	// windowWidth = 1920;
-	windowWidth = 960;
+	windowWidth = 1920;
+	// windowWidth = 960;
 	//windowWidth = displayMode.w;
 
-	// windowHeight = 1080;
-	windowHeight = 540;
+	windowHeight = 1080;
+	// windowHeight = 540;
 	//windowHeight = displayMode.h;
 
 	window = SDL_CreateWindow(
@@ -135,53 +135,25 @@ void Game::SetUp() {
 
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 
-	Entity player = registry.CreateEntity();
-	player.AddTag(Tag::Player);
-	player.AddComponent<TransformComponent>(glm::vec2(350.0,350.0), glm::vec2(10), 0.0);
-	player.AddComponent<SpriteComponent>("blue-man-walk-right",16,16, 10);
-	player.AddComponent<RigidBodyComponent>(glm::vec2(100, 0), glm::vec2(0));
-	player.AddComponent<AnimationComponent>(AnimationComponent{
-		{"WalkRight", {1,8}},
-		{"WalkLeft", {0,8}}
-	});
-	player.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(0), 160, 160);
-	player.AddComponent<CameraFollowComponent>();
-	player.AddComponent<PlayerControlComponent>(250);
+	////////////////////////////////////////////
+	//Level Setup
+	////////////////////////////////////////////
 
-	Entity man = registry.CreateEntity();
-	man.AddComponent<TransformComponent>(glm::vec2(950.0,350.0), glm::vec2(10), 0.0);
-	man.AddComponent<SpriteComponent>("blue-man",16,16);
-	man.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(0), 160, 160);
-	man.AddComponent<UIButtonComponent>(160,160,[](){
-		Logger::Log("Man clicked.");
-	});
-	
 	Entity bird = registry.CreateEntity();
-	bird.AddComponent<TransformComponent>(glm::vec2(750, 200), glm::vec2(10), 0.0);
+	bird.AddComponent<TransformComponent>(glm::vec2(windowWidth/2 - 160,0), glm::vec2(10), 0.0);
 	bird.AddComponent<SpriteComponent>("bird", 16, 16);
 	bird.AddComponent<AnimationComponent>(AnimationComponent{
-		{"Flap", {0,5}},
-		{"Idle", {1,5}}
+		{"Flap", {1,5}},
+		{"Idle", {0,5}}
 	});
-	bird.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 160);
+	bird.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 120);
+	bird.AddComponent<RigidBodyComponent>(glm::vec2(0,0), glm::vec2(0, 100));
+	bird.AddComponent<PlayerControlComponent>(-200);
 
 	Entity text = registry.CreateEntity();
 	SDL_Color white = {255, 255, 255};
 	text.AddComponent<TextComponent>(glm::vec2(810.0, 50.0),"Press F1", "arial-40", white, true);
 
-	for (int i = 0; i < 100; i++) {
-		Entity testBird0 = registry.CreateEntity();
-		testBird0.AddComponent<TransformComponent>(glm::vec2(300*i, 500.0), glm::vec2(10), 0.0);
-		testBird0.AddComponent<SpriteComponent>("bird", 16, 16);
-		testBird0.AddComponent<AnimationComponent>(AnimationComponent{
-			{"Flap", {0,5}},
-			{"Idle", {1,5}}
-		});
-		testBird0.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 160 * (i/5.0));
-		int speed = (i % 2 == 0) ? 50 : -50;
-		testBird0.AddComponent<RigidBodyComponent>(glm::vec2(speed, 0), glm::vec2(0));
-	}
-	
 }
 
 void Game::ProcessInput() {

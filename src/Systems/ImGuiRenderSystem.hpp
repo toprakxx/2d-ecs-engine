@@ -16,39 +16,39 @@ public:
 		ImGui_ImplSDL2_NewFrame();
 		ImGui::NewFrame();
 
-		if(ImGui::Begin("Blue man teleporter")) {
-			static float xPos;
-			static float yPos;
-			ImGui::InputFloat("x position", &xPos);
-			ImGui::InputFloat("y position", &yPos);
-
-			if(ImGui::Button("Teleport blue man")) {
-				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
-				if(entities) {
-					for (auto entity : *entities) {
-						auto& transform = entity.GetComponent<TransformComponent>();
-
-						transform.position.x = xPos;
-						transform.position.y = yPos;
-					}
-				}
-			}
-
-			static int playerSpeed;
-			ImGui::InputInt("Player speed", &playerSpeed);
-
-			if(ImGui::Button("Change speed")) {
-				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
-				if(entities) {
-					for (auto entity : *entities) {
-						auto& pControl = entity.GetComponent<PlayerControlComponent>();
-
-						pControl.playerSpeed = playerSpeed;
-					}
-				}
-			}
-		}
-		ImGui::End(); //Comment out for demo window
+		// if(ImGui::Begin("Blue man teleporter")) {
+		// 	static float xPos;
+		// 	static float yPos;
+		// 	ImGui::InputFloat("x position", &xPos);
+		// 	ImGui::InputFloat("y position", &yPos);
+		//
+		// 	if(ImGui::Button("Teleport blue man")) {
+		// 		std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
+		// 		if(entities) {
+		// 			for (auto entity : *entities) {
+		// 				auto& transform = entity.GetComponent<TransformComponent>();
+		//
+		// 				transform.position.x = xPos;
+		// 				transform.position.y = yPos;
+		// 			}
+		// 		}
+		// 	}
+		//
+		// 	static int playerSpeed;
+		// 	ImGui::InputInt("Player speed", &playerSpeed);
+		//
+		// 	if(ImGui::Button("Change speed")) {
+		// 		std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Tag::Player);
+		// 		if(entities) {
+		// 			for (auto entity : *entities) {
+		// 				auto& pControl = entity.GetComponent<PlayerControlComponent>();
+		//
+		// 				pControl.playerSpeed = playerSpeed;
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// ImGui::End(); //Comment out for demo window
 
 		// Display a small overlay window to display the map position using the mouse
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav;

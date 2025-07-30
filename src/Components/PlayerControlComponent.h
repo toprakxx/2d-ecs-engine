@@ -1,9 +1,9 @@
 #pragma once
 
 struct PlayerControlComponent {
-	PlayerControlComponent(int ps = 0)
-	: playerSpeed(ps)
+	PlayerControlComponent(int v = 0)
+	: jumpSpeed(v)
 	{}
 
-	int playerSpeed;
+	int jumpSpeed;
 };
