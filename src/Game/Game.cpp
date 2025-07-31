@@ -120,6 +120,8 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
 	assetManager.AddTexture(renderer, "blue-man-walk", "blue-man-walk-sheet.png");
 	assetManager.AddTexture(renderer, "bird", "blue-bird-sheet.png");
+	assetManager.AddTexture(renderer, "bottom-pipe", "bottom-pipe.png");
+	assetManager.AddTexture(renderer, "top-pipe", "top-pipe.png");
 
 	assetManager.AddFont("arial-40", "arial.ttf", 40);
 
@@ -145,13 +147,15 @@ void Game::SetUp() {
 	//Level Setup
 	////////////////////////////////////////////
 	
+	//---//Player
+	
 	int jumpSpeed = 300;
 	int highGrav = 400;
-	int lowGrav = 200;
+	int lowGrav = 300;
 
 	Entity bird = registry.CreateEntity();
 	bird.AddComponent<TransformComponent>(glm::vec2(windowWidth/2 - 160,0), glm::vec2(10), 0.0);
-	bird.AddComponent<SpriteComponent>("bird", 16, 16);
+	bird.AddComponent<SpriteComponent>("bird", 16, 16, 5);
 	bird.AddComponent<AnimationComponent>(AnimationComponent{
 		{"Idle",1,5},
 		{"Flap", 0, 5, false}
@@ -160,19 +164,19 @@ void Game::SetUp() {
 	bird.AddComponent<RigidBodyComponent>(glm::vec2(0,0), glm::vec2(0,0));
 	bird.AddComponent<PlayerControlComponent>(-jumpSpeed, highGrav, lowGrav);
 
-	//---//
+	//---//Pipe Spawner
 
 	int gap = 300;
 	int pipeRightShift = windowWidth;
-	int pipeMoveSpeed = 200;
+	int pipeMoveSpeed = 150;
 	int high = windowHeight/2 - 100;
-	int low = windowHeight - 100;
-	double spawnTimer = 2.5;
+	int low = windowHeight - 140;
+	double spawnTimer = 3;
 
 	Entity pipeSpawner = registry.CreateEntity();
 	pipeSpawner.AddComponent<PipeSpawnerComponent>(gap, pipeRightShift, pipeMoveSpeed, high, low, spawnTimer);
 	
-	//---//
+	//---//Score
 
 	Entity text = registry.CreateEntity();
 	SDL_Color white = {255, 255, 255};

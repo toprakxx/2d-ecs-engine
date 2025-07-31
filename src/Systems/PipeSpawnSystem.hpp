@@ -25,17 +25,17 @@ public:
 			int random = dist(rng);
 
 			Entity bottom = Registry::registry->CreateEntity();
-			bottom.AddComponent<SpriteComponent>("blue-man", 16, 16);
+			bottom.AddComponent<SpriteComponent>("bottom-pipe", 16, 64);
 			bottom.AddComponent<TransformComponent>(glm::vec2(psc.pipeRightShift, random), glm::vec2(10));
-			bottom.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(0), 160, 160);
+			bottom.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(10, 30), 140, 480);
 			bottom.AddComponent<RigidBodyComponent>(glm::vec2(-psc.pipeMoveSpeed, 0));
 			bottom.AddTag(Obstacle);
 
 			Entity top = Registry::registry->CreateEntity();
-			top.AddComponent<SpriteComponent>("blue-man", 16, 16);
+			top.AddComponent<SpriteComponent>("top-pipe", 16, 64);
 			int offset = top.GetComponent<SpriteComponent>().height;
 			top.AddComponent<TransformComponent>(glm::vec2(psc.pipeRightShift, random - (offset*10 + psc.gap)), glm::vec2(10));
-			top.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(0), 160, 160);
+			top.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(10, 130), 140, 480);
 			top.AddComponent<RigidBodyComponent>(glm::vec2(-psc.pipeMoveSpeed, 0));
 			top.AddTag(Obstacle);
 

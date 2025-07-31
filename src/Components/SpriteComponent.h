@@ -8,9 +8,9 @@ struct SpriteComponent {
 		int _width = 0,
 		int _height = 0,
 		int _zIndex = 0,
+		bool _isFixed = false,
 		int _srcRectX = 0,
-		int _srcRectY = 0,
-		bool _isFixed = false
+		int _srcRectY = 0
 	) :
 		assetName(_assetName),
 		width(_width), 
@@ -25,7 +25,7 @@ struct SpriteComponent {
 	int width;
 	int height;
 	int zIndex;
-	SDL_Rect srcRect;
 	bool isFixed;
+	SDL_Rect srcRect;
 	SDL_RendererFlip flip;
 };
