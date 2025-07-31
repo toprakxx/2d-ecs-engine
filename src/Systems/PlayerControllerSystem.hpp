@@ -20,7 +20,28 @@ public:
 			auto& rb = e.GetComponent<RigidBodyComponent>();
 			const auto& pcc = e.GetComponent<PlayerControlComponent>();
 
-			if(input.isKeyPressed(KEY_SPACE)) rb.velocity.y = pcc.jumpSpeed;
+			if(input.isKeyPressed(KEY_SPACE)) {
+				rb.velocity.y = pcc.jumpSpeed;
+				ChangeAnimation(e, "Flap");
+			}
+
+			if(rb.velocity.y >= 0) {
+				//Going down
+				rb.acceleration.y = 300;
+			} else {
+				//Going up
+				rb.acceleration.y = 200;
+			}
 		}
+	}
+
+	void SubscribeToEvents(EventBus& eventBus) {
+		eventBus.SubscribeToEvent<PlayerControllerSystem, AnimationDoneEvent>(
+			this, &PlayerControllerSystem::OnAnimationDone
+		);
+	}
+
+	void OnAnimationDone(AnimationDoneEvent& event) {
+		if(event.animationName == "Flap") ChangeAnimation(event.entity, "Idle");
 	}
 };

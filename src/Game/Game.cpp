@@ -133,21 +133,24 @@ void Game::SetUp() {
 	registry.AddSystem<PlayerControllerSystem>();
 	registry.AddSystem<UIButtonSystem>();
 
+	//Systems that subscribe to events do so here
+	
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
+	registry.GetSystem<PlayerControllerSystem>().SubscribeToEvents(eventBus);
 
 	////////////////////////////////////////////
 	//Level Setup
 	////////////////////////////////////////////
-
+	
 	Entity bird = registry.CreateEntity();
 	bird.AddComponent<TransformComponent>(glm::vec2(windowWidth/2 - 160,0), glm::vec2(10), 0.0);
 	bird.AddComponent<SpriteComponent>("bird", 16, 16);
 	bird.AddComponent<AnimationComponent>(AnimationComponent{
-		{"Flap", {1,5}},
-		{"Idle", {0,5}}
+		{"Idle",1,5},
+		{"Flap", 0, 5, false}
 	});
 	bird.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 120);
-	bird.AddComponent<RigidBodyComponent>(glm::vec2(0,0), glm::vec2(0, 100));
+	bird.AddComponent<RigidBodyComponent>(glm::vec2(0,0), glm::vec2(0,0));
 	bird.AddComponent<PlayerControlComponent>(-200);
 
 	Entity text = registry.CreateEntity();
@@ -200,7 +203,7 @@ void Game::Update() {
 	registry.Update();
 
 	registry.GetSystem<MovementSystem>().Update(deltaTime);
-	registry.GetSystem<AnimationSystem>().Update(deltaTime);
+	registry.GetSystem<AnimationSystem>().Update(deltaTime, eventBus);
 	registry.GetSystem<CollisionSystem>().Update(eventBus);
 	registry.GetSystem<CameraFollowSystem>().Update(camera);
 	

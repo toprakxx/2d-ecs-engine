@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <typeindex>
+#include <string>
 #include "./Event.h"
 #include "../Logger/Logger.h"
 
@@ -18,7 +19,7 @@ public:
 	void EmitEvent(TArgs&&... args) {
 		auto callbacks = subscribers.find(typeid(TEvent));
 		if (callbacks == subscribers.end()) {
-			Logger::Err("Event with no listeners.");
+			Logger::Err(std::string("Event with no listeners: ") + typeid(TEvent).name());
 			return;
 		}
 

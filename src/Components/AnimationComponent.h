@@ -3,25 +3,10 @@
 #include <unordered_map>
 #include <string_view>
 
-// struct AnimationComponent {
-// 	AnimationComponent(int frameCount = 0, int frameRate = 12)
-// 	:
-// 	animationFrameCount(frameCount), 
-// 	animationFrameRate(frameRate),
-// 	secondsPerAnimationFrame(1.0f/animationFrameRate),
-// 	frameTimer(secondsPerAnimationFrame),
-// 	currentFrame(0) {} 
-//
-// 	int animationFrameCount;
-// 	int animationFrameRate;
-// 	double secondsPerAnimationFrame;
-// 	double frameTimer;
-// 	int currentFrame;
-// };
-
 struct AnimationClip {
-	AnimationClip(int index = 0, int frameCount = 0, bool looping = true, int frameRate = 12)
+	AnimationClip(std::string_view name = "", int index = 0, int frameCount = 0, bool looping = true, int frameRate = 12)
 	:
+	name(name),
 	sheetIndex(index),
 	animationFrameCount(frameCount), 
 	isLooping(looping),
@@ -31,6 +16,7 @@ struct AnimationClip {
 	currentFrame(0)
 	{} 
 
+	std::string_view name;
 	int sheetIndex;
 	int animationFrameCount;
 	bool isLooping;
@@ -42,10 +28,13 @@ struct AnimationClip {
 
 struct AnimationComponent {
 	AnimationComponent() = default;
-	AnimationComponent(std::initializer_list<std::pair<const std::string_view, AnimationClip>> init)
-	: animations(init)
-	, currentAnimation(animations.begin()->second)
-	{};
+	AnimationComponent(std::initializer_list<AnimationClip> init)
+	{
+		for(auto& clip : init) {
+			animations.emplace(clip.name, clip);
+		}
+		currentAnimation = *init.begin();
+	};
 
 	std::unordered_map<std::string_view, AnimationClip> animations;
 	AnimationClip currentAnimation;
