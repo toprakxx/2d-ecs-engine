@@ -27,10 +27,10 @@ public:
 
 			if(rb.velocity.y >= 0) {
 				//Going down
-				rb.acceleration.y = 300;
+				rb.acceleration.y = pcc.highGrav;
 			} else {
 				//Going up
-				rb.acceleration.y = 200;
+				rb.acceleration.y = pcc.lowGrav;
 			}
 		}
 	}

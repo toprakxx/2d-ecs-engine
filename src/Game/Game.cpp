@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <random>
 #include <glm/glm.hpp>
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl2.h>
@@ -18,6 +19,7 @@
 #include "../Systems/ImGuiRenderSystem.hpp"
 #include "../Systems/PlayerControllerSystem.hpp"
 #include "../Systems/UIButtonSystem.hpp"
+#include "../Systems/PipeSpawnSystem.hpp"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
@@ -27,7 +29,7 @@
 #include "../Components/TextComponent.h"
 #include "../Components/PlayerControlComponent.h"
 #include "../Components/UIButtonComponent.h"
-#include "SDL_events.h"
+#include "../Components/PipeSpawnerComponent.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -116,7 +118,7 @@ void Game::Run() {
 
 void Game::SetUp() {
 	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
-	assetManager.AddTexture(renderer, "blue-man-walk-right", "blue-man-walk-sheet.png");
+	assetManager.AddTexture(renderer, "blue-man-walk", "blue-man-walk-sheet.png");
 	assetManager.AddTexture(renderer, "bird", "blue-bird-sheet.png");
 
 	assetManager.AddFont("arial-40", "arial.ttf", 40);
@@ -132,6 +134,7 @@ void Game::SetUp() {
 	registry.AddSystem<ImGuiRenderSystem>();
 	registry.AddSystem<PlayerControllerSystem>();
 	registry.AddSystem<UIButtonSystem>();
+	registry.AddSystem<PipeSpawnSystem>();
 
 	//Systems that subscribe to events do so here
 	
@@ -142,6 +145,10 @@ void Game::SetUp() {
 	//Level Setup
 	////////////////////////////////////////////
 	
+	int jumpSpeed = 300;
+	int highGrav = 400;
+	int lowGrav = 200;
+
 	Entity bird = registry.CreateEntity();
 	bird.AddComponent<TransformComponent>(glm::vec2(windowWidth/2 - 160,0), glm::vec2(10), 0.0);
 	bird.AddComponent<SpriteComponent>("bird", 16, 16);
@@ -149,9 +156,23 @@ void Game::SetUp() {
 		{"Idle",1,5},
 		{"Flap", 0, 5, false}
 	});
-	bird.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 120);
+	bird.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 100);
 	bird.AddComponent<RigidBodyComponent>(glm::vec2(0,0), glm::vec2(0,0));
-	bird.AddComponent<PlayerControlComponent>(-200);
+	bird.AddComponent<PlayerControlComponent>(-jumpSpeed, highGrav, lowGrav);
+
+	//---//
+
+	int gap = 300;
+	int pipeRightShift = windowWidth;
+	int pipeMoveSpeed = 200;
+	int high = windowHeight/2 - 100;
+	int low = windowHeight - 100;
+	double spawnTimer = 2.5;
+
+	Entity pipeSpawner = registry.CreateEntity();
+	pipeSpawner.AddComponent<PipeSpawnerComponent>(gap, pipeRightShift, pipeMoveSpeed, high, low, spawnTimer);
+	
+	//---//
 
 	Entity text = registry.CreateEntity();
 	SDL_Color white = {255, 255, 255};
@@ -206,6 +227,7 @@ void Game::Update() {
 	registry.GetSystem<AnimationSystem>().Update(deltaTime, eventBus);
 	registry.GetSystem<CollisionSystem>().Update(eventBus);
 	registry.GetSystem<CameraFollowSystem>().Update(camera);
+	registry.GetSystem<PipeSpawnSystem>().Update(deltaTime);
 	
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;

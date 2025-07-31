@@ -22,7 +22,7 @@ public:
 
 private:
 	bool isGameRunning = false;
-	bool inDebugMode = false;
+	bool inDebugMode = true;
 
 	SDL_Window* window = nullptr;
 	SDL_Renderer* renderer = nullptr;
