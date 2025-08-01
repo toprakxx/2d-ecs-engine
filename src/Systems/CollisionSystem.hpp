@@ -12,7 +12,6 @@
 #include "../EventSystem/Events/CollisionExitEvent.h"
 
 //NOTE: Change circle collider from taking in the radius to taking in the diameter to simplify this and the debug system
-//NOTE: Find a way to clean the collison map when a entity dies (from the entries of that entity)
 
 class CollisionSystem : public System {
 public:
@@ -70,7 +69,7 @@ public:
 					bColl.inCollision = true;
 					auto temp = MakeEntityPair(a, b);
 					if(!collidingPairs.contains(temp)) {
-						Logger::Log("Collision enter between: " + std::to_string(a.id) + ", " + std::to_string(b.id));
+						// Logger::Log("Collision enter between: " + std::to_string(a.id) + ", " + std::to_string(b.id));
 						collidingPairs.insert(temp);
 						eventBus.EmitEvent<CollisionEnterEvent>(a,b);
 					}
@@ -84,7 +83,7 @@ public:
 		for (auto it = collidingPairs.begin(); it != collidingPairs.end();){
 			if(CheckCollision(it->first, it->second)) {++it;}
 			else {
-				Logger::Log("Collision exit between: " + std::to_string(it->first.id) + ", " + std::to_string(it->second.id));
+				// Logger::Log("Collision exit between: " + std::to_string(it->first.id) + ", " + std::to_string(it->second.id));
 				eventBus.EmitEvent<CollisionExitEvent>(it->first, it->second);
 				it = collidingPairs.erase(it);
 			}

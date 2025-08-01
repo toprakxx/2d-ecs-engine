@@ -20,6 +20,7 @@
 #include "../Systems/PlayerControllerSystem.hpp"
 #include "../Systems/UIButtonSystem.hpp"
 #include "../Systems/PipeSpawnSystem.hpp"
+#include "../Systems/ScoreUpdateSystem.hpp"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
@@ -137,11 +138,7 @@ void Game::SetUp() {
 	registry.AddSystem<PlayerControllerSystem>();
 	registry.AddSystem<UIButtonSystem>();
 	registry.AddSystem<PipeSpawnSystem>();
-
-	//Systems that subscribe to events do so here
-	
-	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
-	registry.GetSystem<PlayerControllerSystem>().SubscribeToEvents(eventBus);
+	registry.AddSystem<ScoreUpdateSystem>();
 
 	////////////////////////////////////////////
 	//Level Setup
@@ -163,6 +160,7 @@ void Game::SetUp() {
 	bird.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 100);
 	bird.AddComponent<RigidBodyComponent>(glm::vec2(0,0), glm::vec2(0,0));
 	bird.AddComponent<PlayerControlComponent>(-jumpSpeed, highGrav, lowGrav);
+	bird.AddTag(Player);
 
 	//---//Pipe Spawner
 
@@ -181,6 +179,12 @@ void Game::SetUp() {
 	Entity text = registry.CreateEntity();
 	SDL_Color white = {255, 255, 255};
 	text.AddComponent<TextComponent>(glm::vec2(810.0, 50.0),"Press F1", "arial-40", white, true);
+	text.AddComponent<ScoreText>();
+
+	//Systems that subscribe to events do so here
+	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
+	registry.GetSystem<PlayerControllerSystem>().SubscribeToEvents(eventBus);
+	registry.GetSystem<ScoreUpdateSystem>().SubscribeToEvents(eventBus);
 
 }
 
@@ -232,6 +236,7 @@ void Game::Update() {
 	registry.GetSystem<CollisionSystem>().Update(eventBus);
 	registry.GetSystem<CameraFollowSystem>().Update(camera);
 	registry.GetSystem<PipeSpawnSystem>().Update(deltaTime);
+	registry.GetSystem<ScoreUpdateSystem>().Update();
 	
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
