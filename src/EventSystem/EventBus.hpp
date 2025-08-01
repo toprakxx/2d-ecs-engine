@@ -19,7 +19,7 @@ public:
 	void EmitEvent(TArgs&&... args) {
 		auto callbacks = subscribers.find(typeid(TEvent));
 		if (callbacks == subscribers.end()) {
-			Logger::Err(std::string("Event with no listeners: ") + typeid(TEvent).name());
+			// Logger::Err(std::string("Event with no listeners: ") + typeid(TEvent).name());
 			return;
 		}
 

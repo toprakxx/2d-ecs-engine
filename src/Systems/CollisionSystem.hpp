@@ -1,19 +1,25 @@
 #pragma once
 #include <algorithm>
+#include <utility>
+#include <unordered_set>
 #include <SDL.h>
 #include "../ECS/ECS.h"
 #include "../Components/ColliderComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../EventSystem/EventBus.hpp"
 #include "../EventSystem/Events/CollisionEvent.h"
+#include "../EventSystem/Events/CollisionEnterEvent.h"
+#include "../EventSystem/Events/CollisionExitEvent.h"
 
 //NOTE: Change circle collider from taking in the radius to taking in the diameter to simplify this and the debug system
+//NOTE: Find a way to clean the collison map when a entity dies (from the entries of that entity)
 
 class CollisionSystem : public System {
 public:
 	CollisionSystem() {
 		RequireComponent<ColliderComponent>();
 		RequireComponent<TransformComponent>();
+		collidingPairs.reserve(VECTOR_INIT);
 	}
 
 	//For box colliders position of the entity + collider offset is the upper left corner
@@ -25,7 +31,7 @@ public:
 		std::vector<Entity>& entities = GetSystemEntities();
 		for (auto entity : entities) entity.GetComponent<ColliderComponent>().inCollision = false;
 
-		std::sort(entities.begin(), entities.end(), [](Entity a, Entity b) {
+		std::sort(entities.begin(), entities.end(), [](Entity& a, Entity& b) {
 			const auto& aTrns = a.GetComponent<TransformComponent>();
 			const auto& aColl = a.GetComponent<ColliderComponent>();
 			const auto& bTrns = b.GetComponent<TransformComponent>();
@@ -62,18 +68,34 @@ public:
 				if (collisionHappened) {
 					aColl.inCollision = true;
 					bColl.inCollision = true;
-					eventBus.EmitEvent<CollisionEvent>(a, b);
+					auto temp = MakeEntityPair(a, b);
+					if(!collidingPairs.contains(temp)) {
+						Logger::Log("Collision enter between: " + std::to_string(a.id) + ", " + std::to_string(b.id));
+						collidingPairs.insert(temp);
+						eventBus.EmitEvent<CollisionEnterEvent>(a,b);
+					}
 					// Logger::Log("Collision between: " + std::to_string(a.id) + ", " + std::to_string(b.id));
+					eventBus.EmitEvent<CollisionEvent>(a, b);
 				}
+			}
+		}
+		//Initial collision checks complete
+		
+		for (auto it = collidingPairs.begin(); it != collidingPairs.end();){
+			if(CheckCollision(it->first, it->second)) {++it;}
+			else {
+				Logger::Log("Collision exit between: " + std::to_string(it->first.id) + ", " + std::to_string(it->second.id));
+				eventBus.EmitEvent<CollisionExitEvent>(it->first, it->second);
+				it = collidingPairs.erase(it);
 			}
 		}
 	}
 
-	bool CheckCollision(Entity& a, Entity& b) {
-		TransformComponent aTrns = a.GetComponent<TransformComponent>();
-		ColliderComponent aColl = a.GetComponent<ColliderComponent>();
-		TransformComponent bTrns = b.GetComponent<TransformComponent>();
-		ColliderComponent bColl = b.GetComponent<ColliderComponent>();
+	bool CheckCollision(const Entity& a, const Entity& b) {
+		const TransformComponent& aTrns = a.GetComponent<TransformComponent>();
+		const ColliderComponent& aColl = a.GetComponent<ColliderComponent>();
+		const TransformComponent& bTrns = b.GetComponent<TransformComponent>();
+		const ColliderComponent& bColl = b.GetComponent<ColliderComponent>();
 
 		Collider aType = aColl.type;
 		Collider bType = bColl.type;
@@ -117,7 +139,7 @@ public:
 	}
 
 	//https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
-	bool CircleAndBoxCollision(Entity& a, Entity& b) {
+	bool CircleAndBoxCollision(const Entity& a, const Entity& b) {
 		TransformComponent& aTrns = a.GetComponent<TransformComponent>();
 		ColliderComponent& aColl = a.GetComponent<ColliderComponent>();
 		TransformComponent& bTrns = b.GetComponent<TransformComponent>();
@@ -135,4 +157,25 @@ public:
 
 		return glm::length(difference) < aColl.width_2r/2.0;
 	}
+
+	std::pair<Entity,Entity> MakeEntityPair(Entity a, Entity b) {
+		if(a.id < b.id) return {a,b};
+		return {b,a};
+	}
+
+	struct EntityPairHash {
+		std::size_t operator()(const std::pair<Entity,Entity>& p) const noexcept {
+			return std::hash<int>{}(p.first.id) ^ (std::hash<int>{}(p.second.id) + 0x9e3779b9 + (std::hash<int>{}(p.first.id) << 6) + (std::hash<int>{}(p.first.id) >> 2));
+		}
+	};
+
+	struct EntityPairEq {
+		bool operator()(const std::pair<Entity,Entity>& a,
+				  const std::pair<Entity,Entity>& b) const noexcept {
+			return a.first.id == b.first.id && a.second.id == b.second.id;
+		}
+	};
+
+private:
+	std::unordered_set<std::pair<Entity, Entity>, EntityPairHash, EntityPairEq> collidingPairs;
 };
