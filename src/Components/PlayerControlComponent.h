@@ -6,11 +6,11 @@ struct PlayerControlComponent {
 		jumpSpeed(v),
 		highGrav(highGrav),
 		lowGrav(lowGrav),
-		isActive(true)
+		isAlive(true)
 	{}
 
 	int jumpSpeed;
 	int highGrav;
 	int lowGrav;
-	bool isActive;
+	bool isAlive;
 };

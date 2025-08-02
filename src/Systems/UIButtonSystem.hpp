@@ -23,10 +23,13 @@ public:
 			glm::vec2 mousePos = input.GetMousePosition();
 			int mouseX = mousePos.x + camera.x;
 			int mouseY = mousePos.y + camera.y;
+			bool mouseHover = mouseX > transform.position.x
+				and mouseX < transform.position.x + button.width
+				and mouseY > transform.position.y
+				and mouseY < transform.position.y + button.height;
+			button.mouseHover = mouseHover;
 
-			if(mouseX > transform.position.x and mouseX < transform.position.x + button.width and
-			mouseY > transform.position.y and mouseY < transform.position.y + button.height and
-			input.isMousePressed(MOUSE_L)) {
+			if(mouseHover and input.isMousePressed(MOUSE_L)) {
 				if(button.callback) button.callback();
 				eventBus.EmitEvent<ButtonClickedEvent>(e);
 			}

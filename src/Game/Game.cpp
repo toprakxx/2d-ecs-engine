@@ -22,16 +22,7 @@
 #include "../Systems/PipeSpawnSystem.hpp"
 #include "../Systems/ScoreUpdateSystem.hpp"
 #include "../Systems/PipeCollisionSytem.hpp"
-
-#include "../Components/TransformComponent.h"
-#include "../Components/RigidBodyComponent.h"
-#include "../Components/SpriteComponent.h"
-#include "../Components/AnimationComponent.h"
-#include "../Components/CameraFollowComponent.h"
-#include "../Components/TextComponent.h"
-#include "../Components/PlayerControlComponent.h"
-#include "../Components/UIButtonComponent.h"
-#include "../Components/PipeSpawnerComponent.h"
+#include "../Systems/UIDebugSystem.hpp"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -142,8 +133,9 @@ void Game::SetUp() {
 	registry.AddSystem<PipeSpawnSystem>();
 	registry.AddSystem<ScoreUpdateSystem>();
 	registry.AddSystem<PipeCollisionSystem>();
+	registry.AddSystem<UIDebugSystem>();
 
-	levelLoader.LoadLevel(Levels::Gameplay);
+	levelLoader.LoadLevel(Levels::StartMenu);
 
 	//Systems that subscribe to events do so here
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
@@ -223,6 +215,7 @@ void Game::Render() {
 	if(inDebugMode) {
 		registry.GetSystem<CollisionDebugSystem>().Update(renderer, camera);
 		registry.GetSystem<ImGuiRenderSystem>().Update(renderer, camera, registry, deltaTime);
+		registry.GetSystem<UIDebugSystem>().Update(renderer, camera);
 	}
 
 	SDL_RenderPresent(renderer);

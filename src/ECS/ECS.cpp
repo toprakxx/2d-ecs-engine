@@ -122,7 +122,7 @@ void Registry::AddEntityToSystems(Entity entity) {
 		const auto& systemSignature = system.second->GetSystemComponentSignature();
 		if ((systemSignature & entitySignature) == systemSignature) system.second->AddEntityToSystem(entity);
 
-		if ((renderSign & entitySignature) == renderSign) {
+		if ((renderSign & systemSignature) == renderSign) {
 			std::vector<Entity>& refVector = system.second->GetSystemEntities();
 			std::sort(refVector.begin(), refVector.end(), [](const Entity &a, const Entity &b) {
 				return a.GetComponent<SpriteComponent>().zIndex < b.GetComponent<SpriteComponent>().zIndex;

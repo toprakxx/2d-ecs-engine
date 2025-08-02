@@ -20,7 +20,7 @@ public:
 			auto& rb = e.GetComponent<RigidBodyComponent>();
 			const auto& pcc = e.GetComponent<PlayerControlComponent>();
 
-			if(input.isKeyPressed(KEY_SPACE) and pcc.isActive) {
+			if(input.isKeyPressed(KEY_SPACE) and pcc.isAlive) {
 				rb.velocity.y = pcc.jumpSpeed;
 				ChangeAnimation(e, "Flap");
 			}

@@ -39,7 +39,7 @@ public:
 
 			difference = glm::normalize(difference);
 
-			pCC.isActive = false;
+			pCC.isAlive = false;
 			ChangeAnimation(player, "Dead");
 			pRB.velocity = difference * 400.0f;
 		}

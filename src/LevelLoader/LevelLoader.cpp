@@ -13,23 +13,43 @@
 #include "../Components/ColliderComponent.h"
 #include "../Components/ScoreText.h"
 
+auto &Registry =  Registry::registry;
+
 void LevelLoader::UnloadCurrentLevel() {
-	Registry::registry->ClearEntities();
+	Registry->ClearEntities();
 }
 
 void LevelLoader::LoadLevel(Levels level) {
-	UnloadCurrentLevel();
-
 	switch (level) {
-	case StartMenu: 
+	case StartMenu: {
+			Entity start = Registry->CreateEntity();
+			SDL_Color white = {255, 255, 255};
+			start.AddComponent<TransformComponent>(glm::vec2(800,500));
+			start.AddComponent<TextComponent>("Start", "pico-40", white, true);
+			start.AddComponent<UIButtonComponent>(200,50, [this](){
+				UnloadCurrentLevel();
+				LoadLevel(Gameplay);
+			});
+
+			Entity quit = Registry->CreateEntity();
+			quit.AddComponent<TransformComponent>(glm::vec2(800,600));
+			quit.AddComponent<TextComponent>("Quit", "pico-40", white, true);
+			quit.AddComponent<UIButtonComponent>(200,50,[](){
+				SDL_Event e;
+				e.type = SDL_QUIT;
+				SDL_PushEvent(&e);
+			});
+
+			break;
+		}
 	case Gameplay:{
 		//---//Player//---//
 		int jumpSpeed = 300;
 		int highGrav = 400;
 		int lowGrav = 300;
 
-		Entity bird = Registry::registry->CreateEntity();
-		bird.AddComponent<TransformComponent>(glm::vec2(Game::windowWidth/2 - 160,0), glm::vec2(10), 0.0);
+		Entity bird = Registry->CreateEntity();
+		bird.AddComponent<TransformComponent>(glm::vec2(Game::windowWidth/2 - 160,200), glm::vec2(10), 0.0);
 		bird.AddComponent<SpriteComponent>("bird", 16, 16, 5);
 		bird.AddComponent<AnimationComponent>(AnimationComponent{
 			{"Idle",1,5},
@@ -49,13 +69,14 @@ void LevelLoader::LoadLevel(Levels level) {
 		int low = Game::windowHeight - 140;
 		double spawnTimer = 3;
 
-		Entity pipeSpawner = Registry::registry->CreateEntity();
+		Entity pipeSpawner = Registry->CreateEntity();
 		pipeSpawner.AddComponent<PipeSpawnerComponent>(gap, pipeRightShift, pipeMoveSpeed, high, low, spawnTimer);
 
 		//---//Score//---//
-		Entity text = Registry::registry->CreateEntity();
+		Entity text = Registry->CreateEntity();
 		SDL_Color white = {255, 255, 255};
-		text.AddComponent<TextComponent>(glm::vec2(800.0, 50.0),"Press F1", "pico-40", white, true);
+		text.AddComponent<TransformComponent>(glm::vec2(800, 50));
+		text.AddComponent<TextComponent>("Score: ", "pico-40", white, true);
 		text.AddComponent<ScoreText>();
 
 		break;
