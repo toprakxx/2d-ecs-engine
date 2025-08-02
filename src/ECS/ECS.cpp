@@ -107,6 +107,12 @@ void Registry::KillEntity(Entity entity) {
 	entitiesToBeKilled.push_back(entity);
 }
 
+void Registry::ClearEntities() {
+	for (int i = 0; i < numOfEntites; i++) {
+		entitiesToBeKilled.emplace_back(i);
+	}
+}
+
 void Registry::AddEntityToSystems(Entity entity) {
 	const Signature entitySignature = entityComponentSignatures[entity.id];
 

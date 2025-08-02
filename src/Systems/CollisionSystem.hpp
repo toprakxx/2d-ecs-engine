@@ -145,9 +145,8 @@ public:
 		ColliderComponent& bColl = b.GetComponent<ColliderComponent>();
 
 		glm::vec2 circleCenter = aTrns.position + aColl.offset;
-		glm::vec2 boxCenter = bTrns.position + bColl.offset + 
-			glm::vec2(bColl.width_2r/2.0, bColl.height/2.0);
 		glm::vec2 boxHalfExtends = glm::vec2(bColl.width_2r/2.0, bColl.height/2.0);
+		glm::vec2 boxCenter = bTrns.position + bColl.offset + boxHalfExtends;
 
 		glm::vec2 difference = circleCenter - boxCenter;
 		glm::vec2 clamped = glm::clamp(difference, -boxHalfExtends, boxHalfExtends);

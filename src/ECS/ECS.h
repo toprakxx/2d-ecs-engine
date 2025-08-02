@@ -116,6 +116,7 @@ public:
 
 	Entity CreateEntity();
 	void KillEntity(Entity entity);
+	void ClearEntities();
 
 	//Entity management
 	//Add the entity to the systems with matching signatures

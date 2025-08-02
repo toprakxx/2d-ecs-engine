@@ -1,5 +1,4 @@
 #include <SDL.h>
-#include <random>
 #include <glm/glm.hpp>
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl2.h>
@@ -7,6 +6,7 @@
 #include "../Utils.hpp"
 #include "./Game.h"
 #include "../Logger/Logger.h"
+#include "../LevelLoader/LevelLoader.h"
 
 #include "../Systems/RenderSystem.hpp"
 #include "../Systems/MovementSystem.hpp"
@@ -21,6 +21,7 @@
 #include "../Systems/UIButtonSystem.hpp"
 #include "../Systems/PipeSpawnSystem.hpp"
 #include "../Systems/ScoreUpdateSystem.hpp"
+#include "../Systems/PipeCollisionSytem.hpp"
 
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
@@ -125,6 +126,7 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "top-pipe", "top-pipe.png");
 
 	assetManager.AddFont("arial-40", "arial.ttf", 40);
+	assetManager.AddFont("pico-40", "pico8.ttf", 40);
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
@@ -139,52 +141,15 @@ void Game::SetUp() {
 	registry.AddSystem<UIButtonSystem>();
 	registry.AddSystem<PipeSpawnSystem>();
 	registry.AddSystem<ScoreUpdateSystem>();
+	registry.AddSystem<PipeCollisionSystem>();
 
-	////////////////////////////////////////////
-	//Level Setup
-	////////////////////////////////////////////
-	
-	//---//Player
-	
-	int jumpSpeed = 300;
-	int highGrav = 400;
-	int lowGrav = 300;
-
-	Entity bird = registry.CreateEntity();
-	bird.AddComponent<TransformComponent>(glm::vec2(windowWidth/2 - 160,0), glm::vec2(10), 0.0);
-	bird.AddComponent<SpriteComponent>("bird", 16, 16, 5);
-	bird.AddComponent<AnimationComponent>(AnimationComponent{
-		{"Idle",1,5},
-		{"Flap", 0, 5, false}
-	});
-	bird.AddComponent<ColliderComponent>(Collider::Circle, glm::vec2(80,80), 100);
-	bird.AddComponent<RigidBodyComponent>(glm::vec2(0,0), glm::vec2(0,0));
-	bird.AddComponent<PlayerControlComponent>(-jumpSpeed, highGrav, lowGrav);
-	bird.AddTag(Player);
-
-	//---//Pipe Spawner
-
-	int gap = 300;
-	int pipeRightShift = windowWidth;
-	int pipeMoveSpeed = 150;
-	int high = windowHeight/2 - 100;
-	int low = windowHeight - 140;
-	double spawnTimer = 3;
-
-	Entity pipeSpawner = registry.CreateEntity();
-	pipeSpawner.AddComponent<PipeSpawnerComponent>(gap, pipeRightShift, pipeMoveSpeed, high, low, spawnTimer);
-	
-	//---//Score
-
-	Entity text = registry.CreateEntity();
-	SDL_Color white = {255, 255, 255};
-	text.AddComponent<TextComponent>(glm::vec2(810.0, 50.0),"Press F1", "arial-40", white, true);
-	text.AddComponent<ScoreText>();
+	levelLoader.LoadLevel(Levels::Gameplay);
 
 	//Systems that subscribe to events do so here
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<PlayerControllerSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<ScoreUpdateSystem>().SubscribeToEvents(eventBus);
+	registry.GetSystem<PipeCollisionSystem>().SubscribeToEvents(eventBus);
 
 }
 
@@ -200,7 +165,10 @@ void Game::ProcessInput() {
 			isGameRunning = false;
 			break;
 		case SDL_KEYDOWN:
-			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) isGameRunning = false;
+			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
+				isGameRunning = false;
+				// registry.ClearEntities();
+			}
 			if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
 			inputManager.KeyPressed(sdlEvent.key.keysym.scancode);
 			break;
@@ -268,4 +236,7 @@ void Game::Destroy() {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+
+void LoadGameplay() {
 }
