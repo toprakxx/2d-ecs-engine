@@ -1,5 +1,6 @@
 #pragma once 
 #include "../ECS/ECS.h"
+#include "../SceneLoader/SceneLoader.h"
 #include "../Systems/AnimationSystem.hpp"
 #include "../Components/ColliderComponent.h"
 #include "../Components/TransformComponent.h"
@@ -11,8 +12,9 @@
 
 class PipeCollisionSystem : public System {
 public:
-	void SubscribeToEvents(EventBus& eventBus) {
+	void SubscribeToEvents(EventBus& eventBus, SceneLoader* sceneLoader) {
 		eventBus.SubscribeToEvent<PipeCollisionSystem, CollisionEvent>(this, &PipeCollisionSystem::OnPipeCollision);
+		this->sceneLoader = sceneLoader;
 	}
 
 	void OnPipeCollision(CollisionEvent& e) {
@@ -39,9 +41,16 @@ public:
 
 			difference = glm::normalize(difference);
 
-			pCC.isAlive = false;
-			ChangeAnimation(player, "Dead");
 			pRB.velocity = difference * 400.0f;
+
+			if(pCC.isAlive) {
+				pCC.isAlive = false;
+				ChangeAnimation(player, "Dead");
+				Logger::Assert(sceneLoader, "SceneLoader null in pipe coll. sys.");
+				sceneLoader->LoadScene(DeathScreen);
+			}
 		}
 	}
+
+	SceneLoader* sceneLoader = nullptr;
 };

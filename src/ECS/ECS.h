@@ -1,9 +1,11 @@
 #pragma once
+#include <deque>
 #include <memory>
 #include <bitset>
 #include <queue>
 #include <vector>
 #include <unordered_map>
+#include <string>
 #include <typeindex>
 #include "../Utils.hpp"
 #include "../Logger/Logger.h"
@@ -122,6 +124,7 @@ public:
 	//Add the entity to the systems with matching signatures
 	void AddEntityToSystems(Entity entity);
 	void RemoveEntityFromSystems(Entity entity);
+	void ClearEntityFromCollidingPairs(Entity entity);
 
 	//Component management
 	template <typename TComponent, typename ...TArgs>
@@ -131,7 +134,7 @@ public:
 	template<typename TComponent>
 	bool HasComponent(Entity entity) const;
 	template<typename TComponent>
-	TComponent& GetComponent(Entity entity) const;
+	TComponent& GetComponent(Entity entity);
 
 	//System management
 	template<typename TSystem, typename ...TArgs>
@@ -148,8 +151,8 @@ public:
 	bool EntityHasTag(Entity entity, Tag tag);
 	std::vector<Entity>* u_GetEntitiesWithTag(Tag tag);
 
-private:
 	int numOfEntites = 0;
+private:
 	//vector index == component type id, pool index == entity id
 	//[][] would first go to the data pool belonging to a component type
 	//and access the specific data of that component type belonging to an entity
@@ -161,7 +164,7 @@ private:
 	std::unordered_map<std::type_index, std::shared_ptr<System>> systems;
 	std::vector<Entity> entitesToBeAdded;
 	std::vector<Entity> entitiesToBeKilled;
-	std::queue<int> freeIDs;
+	std::deque<int> freeIDs;
 
 	std::unordered_map<int, std::bitset<MAX_TAGS>> entityTagSignatures;
 	std::unordered_map<Tag, std::vector<Entity>> tagToEntityMap;
@@ -239,11 +242,33 @@ bool Registry::HasComponent(Entity entity) const {
 }
 
 template<typename TComponent>
-TComponent& Registry::GetComponent(Entity entity) const {
+TComponent& Registry::GetComponent(Entity entity) {
+	auto it = std::find(freeIDs.begin(), freeIDs.end(), entity.id);
+	if(it != freeIDs.end()) {
+		Logger::Err("Trying to get a free id's component:" + std::to_string(entity.id));
+	}
+	Logger::Assert(entity.HasComponent<TComponent>(), 
+				"Entity with id: " + std::to_string(entity.id) 
+				+ " does not have component: " + typeid(TComponent).name());
+
 	const int componentID = Component<TComponent>::GetID();
 	std::shared_ptr<Pool<TComponent>> componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
 	return componentPool->Get(entity.id);
 }
+
+// template<typename TComponent>
+// TComponent& Registry::GetComponent(Entity entity) {
+//     Logger::Assert(entity.HasComponent<TComponent>(), 
+//         "Entity " + std::to_string(entity.id) + " missing component: " + typeid(TComponent).name());
+//
+//     const int componentID = Component<TComponent>::GetID();
+//
+//     Logger::Assert(componentID < componentPools.size() && componentPools[componentID] != nullptr,
+//         "Invalid pool for component: " + std::string(typeid(TComponent).name()));
+//
+//     auto componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
+//     return componentPool->Get(entity.id);
+// }
 
 template<typename TSystem, typename ...TArgs>
 void Registry::AddSystem(TArgs&& ...args) {

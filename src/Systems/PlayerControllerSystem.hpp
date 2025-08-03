@@ -1,5 +1,6 @@
 #pragma once
 #include "../ECS/ECS.h"
+#include "../Game/Game.h"
 #include "../InputManager/InputManager.h"
 #include "../Systems/AnimationSystem.hpp"
 #include "../Components/PlayerControlComponent.h"
@@ -15,10 +16,11 @@ public:
 		RequireComponent<RigidBodyComponent>();
 	}
 
-	void Update(const InputManager& input) {
+	void Update(const InputManager& input, SceneLoader& sceneLoader) {
 		for (auto e : GetSystemEntities()) {
 			auto& rb = e.GetComponent<RigidBodyComponent>();
-			const auto& pcc = e.GetComponent<PlayerControlComponent>();
+			auto& pcc = e.GetComponent<PlayerControlComponent>();
+			const auto& transform = e.GetComponent<TransformComponent>();
 
 			if(input.isKeyPressed(KEY_SPACE) and pcc.isAlive) {
 				rb.velocity.y = pcc.jumpSpeed;
@@ -31,6 +33,12 @@ public:
 			} else {
 				//Going up
 				rb.acceleration.y = pcc.lowGrav;
+			}
+
+			if(transform.position.y > Game::windowHeight and pcc.isAlive) {
+				pcc.isAlive = false;
+				ChangeAnimation(e, "Dead");
+				sceneLoader.LoadScene(DeathScreen);
 			}
 		}
 	}

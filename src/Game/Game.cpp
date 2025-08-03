@@ -6,7 +6,7 @@
 #include "../Utils.hpp"
 #include "./Game.h"
 #include "../Logger/Logger.h"
-#include "../LevelLoader/LevelLoader.h"
+#include "../SceneLoader/SceneLoader.h"
 
 #include "../Systems/RenderSystem.hpp"
 #include "../Systems/MovementSystem.hpp"
@@ -23,6 +23,7 @@
 #include "../Systems/ScoreUpdateSystem.hpp"
 #include "../Systems/PipeCollisionSytem.hpp"
 #include "../Systems/UIDebugSystem.hpp"
+#include "../Systems/LifetimeSystem.hpp"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -118,6 +119,8 @@ void Game::SetUp() {
 
 	assetManager.AddFont("arial-40", "arial.ttf", 40);
 	assetManager.AddFont("pico-40", "pico8.ttf", 40);
+	assetManager.AddFont("pico-60", "pico8.ttf", 60);
+	assetManager.AddFont("pico-80", "pico8.ttf", 80);
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
@@ -134,14 +137,15 @@ void Game::SetUp() {
 	registry.AddSystem<ScoreUpdateSystem>();
 	registry.AddSystem<PipeCollisionSystem>();
 	registry.AddSystem<UIDebugSystem>();
+	registry.AddSystem<LifetimeSystem>();
 
-	levelLoader.LoadLevel(Levels::StartMenu);
+	sceneLoader.LoadScene(Scenes::StartMenu);
 
 	//Systems that subscribe to events do so here
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<PlayerControllerSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<ScoreUpdateSystem>().SubscribeToEvents(eventBus);
-	registry.GetSystem<PipeCollisionSystem>().SubscribeToEvents(eventBus);
+	registry.GetSystem<PipeCollisionSystem>().SubscribeToEvents(eventBus, &sceneLoader);
 
 }
 
@@ -178,7 +182,7 @@ void Game::ProcessInput() {
 		}
 	}
 	//System dependent on input get updated here
-	registry.GetSystem<PlayerControllerSystem>().Update(inputManager);
+	registry.GetSystem<PlayerControllerSystem>().Update(inputManager, sceneLoader);
 	registry.GetSystem<UIButtonSystem>().Update(eventBus, camera, inputManager);
 }
 
@@ -197,6 +201,7 @@ void Game::Update() {
 	registry.GetSystem<CameraFollowSystem>().Update(camera);
 	registry.GetSystem<PipeSpawnSystem>().Update(deltaTime);
 	registry.GetSystem<ScoreUpdateSystem>().Update();
+	registry.GetSystem<LifetimeSystem>().Update(deltaTime);
 	
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;

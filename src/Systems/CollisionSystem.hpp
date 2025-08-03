@@ -174,6 +174,5 @@ public:
 		}
 	};
 
-private:
 	std::unordered_set<std::pair<Entity, Entity>, EntityPairHash, EntityPairEq> collidingPairs;
 };

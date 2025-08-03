@@ -3,6 +3,7 @@
 #include <typeindex>
 #include "ECS.h"
 #include "../Systems/RenderSystem.hpp"
+#include "../Systems/CollisionSystem.hpp"
 
 Registry* Registry::registry = nullptr;
 
@@ -78,7 +79,8 @@ void Registry::Update() {
 		RemoveEntityFromSystems(entity);
 		entityComponentSignatures[entity.id].reset();
 		entityTagSignatures[entity.id].reset();
-		freeIDs.push(entity.id);
+		ClearEntityFromCollidingPairs(entity);
+		freeIDs.push_back(entity.id);
 	}
 	entitiesToBeKilled.clear();
 }
@@ -93,7 +95,7 @@ Entity Registry::CreateEntity() {
 		}
 	} else {
 		entityID = freeIDs.front();
-		freeIDs.pop();
+		freeIDs.pop_front();
 	}
 
 	// Logger::Log("Entity created with id " + std::to_string(entityID));
@@ -133,6 +135,17 @@ void Registry::AddEntityToSystems(Entity entity) {
 
 void Registry::RemoveEntityFromSystems(Entity entity) {
 	for (auto& system : systems) system.second->RemoveEntityFromSystem(entity);
+}
+
+void Registry::ClearEntityFromCollidingPairs(Entity entity) {
+	auto& set = GetSystem<CollisionSystem>().collidingPairs;
+	for (auto it = set.begin(); it != set.end();) {
+		if(it->first.id == entity.id or it->second.id == entity.id) {
+			it = set.erase(it);
+		} else {
+			++it;
+		}
+	}
 }
 
 void Registry::AddTagToEntity(Entity entity,Tag tag) {

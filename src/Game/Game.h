@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL.h>
 #include "../ECS/ECS.h"
-#include "../LevelLoader/LevelLoader.h"
+#include "../SceneLoader/SceneLoader.h"
 #include "../AssetManager/AssetManager.h"
 #include "../EventSystem/EventBus.hpp"
 #include "../InputManager/InputManager.h"
@@ -36,5 +36,5 @@ private:
 	EventBus eventBus;
 	SDL_Rect camera;
 	InputManager inputManager;
-	LevelLoader levelLoader;
+	SceneLoader sceneLoader;
 };

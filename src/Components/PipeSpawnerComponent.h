@@ -7,7 +7,8 @@ struct PipeSpawnerComponent {
 		int pipeMoveSpeed = 0,
 		int high = 0,
 		int low = 0,
-		double spawnTimer = 0
+		double spawnTimer = 0,
+		float pipeLife = 1
 	) :
 		gap(gap),
 		pipeRightShift(pipeRightShift),
@@ -15,7 +16,8 @@ struct PipeSpawnerComponent {
 		high(high),
 		low(low),
 		spawnTimer(spawnTimer),
-		currentTimer(spawnTimer)
+		currentTimer(0),
+		pipeLife(pipeLife)
 	{}
 
 	int gap;
@@ -25,4 +27,5 @@ struct PipeSpawnerComponent {
 	int low;
 	double spawnTimer;
 	double currentTimer;
+	float pipeLife;
 };

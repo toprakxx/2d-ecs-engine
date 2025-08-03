@@ -6,6 +6,7 @@
 #include "../EventSystem/Events/CollisionEnterEvent.h"
 #include "../Components/ScoreText.h"
 #include "../Components/TextComponent.h"
+#include "../Components/PlayerControlComponent.h"
 
 class ScoreUpdateSystem : public System {
 public:
@@ -24,11 +25,16 @@ public:
 	}
 
 private:
-	void OnPlayerScoreCollission(CollisionEnterEvent& event) {
-		if(event.a.HasTag(Player) and event.b.HasTag(Score)
-		or event.a.HasTag(Score) and event.b.HasTag(Player)){
-			// Logger::Log("Player scored.");
-			score++;
+	void OnPlayerScoreCollission(CollisionEnterEvent& e) {
+		if(e.a.HasTag(Player) and e.b.HasTag(Score)
+		or e.a.HasTag(Score) and e.b.HasTag(Player)){
+			auto& player = e.a.HasTag(Player) ? e.a : e.b;
+			auto& scoreBox = e.a.HasTag(Score) ? e.a : e.b;
+		
+			if(player.GetComponent<PlayerControlComponent>().isAlive) {
+				score++;
+				scoreBox.Kill();
+			}
 		}
 	}
 

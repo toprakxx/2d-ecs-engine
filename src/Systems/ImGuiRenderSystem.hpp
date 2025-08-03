@@ -65,6 +65,34 @@ public:
 		}
 		ImGui::End();
 
+		for (int i = 0; i < registry.numOfEntites; i++) {
+			Entity entity(i);  // or however you wrap entity IDs
+
+			//Maybe add check to make sure this id is not in freeIds
+			if (!entity.HasComponent<TransformComponent>()) continue;
+
+			const auto& transform = entity.GetComponent<TransformComponent>();
+
+			// Convert world → screen
+			float screenX = transform.position.x - camera.x;
+			float screenY = transform.position.y - camera.y;
+
+			// Position next ImGui window
+			ImGui::SetNextWindowPos(ImVec2(screenX, screenY), ImGuiCond_Always, ImVec2(0.5f, 1.0f));
+			ImGui::SetNextWindowBgAlpha(0.3f); // transparent background
+			ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration 
+				| ImGuiWindowFlags_AlwaysAutoResize 
+				| ImGuiWindowFlags_NoSavedSettings 
+				| ImGuiWindowFlags_NoNav 
+				| ImGuiWindowFlags_NoMove;
+
+			std::string label = "EntityID_" + std::to_string(entity.id);
+			if (ImGui::Begin(label.c_str(), NULL, flags)) {
+				ImGui::Text("ID: %d", entity.id);
+			}
+			ImGui::End();
+		}
+	
 		// ImGui::ShowDemoWindow();
 
 		ImGui::Render();
