@@ -5,7 +5,8 @@ enum Tag {
 	Player,
 	Enemy,
 	Obstacle,
-	Score
+	Score,
+	Death
 };
 
 enum Collider {

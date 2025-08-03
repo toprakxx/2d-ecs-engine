@@ -73,7 +73,7 @@ void SceneLoader::LoadScene(Scenes level) {
 			int high = Game::windowHeight/2 - 100;
 			int low = Game::windowHeight - 140;
 			double spawnTimer = 3;
-			float pipeLifetime = 20;
+			float pipeLifetime = 15;
 
 			Entity pipeSpawner = Registry->CreateEntity();
 			pipeSpawner.AddComponent<PipeSpawnerComponent>(gap, pipeRightShift, pipeMoveSpeed, high, low, spawnTimer, pipeLifetime);
@@ -84,6 +84,12 @@ void SceneLoader::LoadScene(Scenes level) {
 			text.AddComponent<TransformComponent>(glm::vec2(800, 50));
 			text.AddComponent<TextComponent>("Score: ", "pico-40", white);
 			text.AddComponent<ScoreText>();
+
+			//---//DeathZone//---//
+			Entity death = Registry->CreateEntity();
+			death.AddComponent<TransformComponent>(glm::vec2(-200, 0));
+			death.AddComponent<ColliderComponent>(Box,glm::vec2(0), 30, Game::windowHeight);
+			death.AddTag(Death);
 
 			break;
 		}

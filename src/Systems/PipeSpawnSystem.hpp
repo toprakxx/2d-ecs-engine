@@ -31,7 +31,6 @@ public:
 			bottom.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(10, 30), 140, 480);
 			bottom.AddComponent<RigidBodyComponent>(glm::vec2(-psc.pipeMoveSpeed, 0));
 			bottom.AddTag(Obstacle);
-			bottom.AddComponent<LifetimeComponent>(psc.pipeLife);
 
 			Entity top = Registry::registry->CreateEntity();
 			top.AddComponent<SpriteComponent>("top-pipe", 16, 64);
@@ -40,7 +39,6 @@ public:
 			top.AddComponent<ColliderComponent>(Collider::Box, glm::vec2(10, 130), 140, 480);
 			top.AddComponent<RigidBodyComponent>(glm::vec2(-psc.pipeMoveSpeed, 0));
 			top.AddTag(Obstacle);
-			top.AddComponent<LifetimeComponent>(psc.pipeLife);
 
 			int scoreYPos = bottom.GetComponent<TransformComponent>().position.y - psc.gap + 10;
 			Entity score = Registry::registry->CreateEntity();
@@ -48,7 +46,6 @@ public:
 			score.AddComponent<ColliderComponent>(Box, glm::vec2(90,0), 10, psc.gap - 20);
 			score.AddComponent<RigidBodyComponent>(glm::vec2(-psc.pipeMoveSpeed, 0));
 			score.AddTag(Score);
-			score.AddComponent<LifetimeComponent>(psc.pipeLife);
 		}
 	}
 

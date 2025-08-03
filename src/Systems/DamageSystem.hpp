@@ -17,7 +17,9 @@ public:
 	void OnCollision(CollisionEvent& event) {
 		// Logger::Log("Collission detected by the damage system.");
 
-		// event.a.Kill();
-		// event.b.Kill();
+		if(event.a.HasTag(Death)) {
+			auto& victim = (event.a.HasTag(Death)) ? event.b : event.a;
+			victim.Kill();
+		}
 	}
 };
