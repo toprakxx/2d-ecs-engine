@@ -16,7 +16,8 @@ public:
 
 	void Update() {
 		for (auto e : GetSystemEntities()) {
-			e.GetComponent<TextComponent>().text = "Score: " + std::to_string(score);
+			e.GetComponent<TextComponent>().text = "Score: " + std::to_string(
+				e.GetComponent<ScoreText>().score);
 		}
 	}
 
@@ -31,12 +32,12 @@ private:
 			auto& player = e.a.HasTag(Player) ? e.a : e.b;
 			auto& scoreBox = e.a.HasTag(Score) ? e.a : e.b;
 		
-			if(player.GetComponent<PlayerControlComponent>().isAlive) {
-				score++;
+		if(player.GetComponent<PlayerControlComponent>().isAlive) {
+				for (auto e : GetSystemEntities()) {
+					e.GetComponent<ScoreText>().score++;
+				}
 				scoreBox.Kill();
 			}
 		}
 	}
-
-	int score = 0;
 };

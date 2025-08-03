@@ -202,7 +202,7 @@ void Game::Update() {
 	registry.GetSystem<PipeSpawnSystem>().Update(deltaTime);
 	registry.GetSystem<ScoreUpdateSystem>().Update();
 	registry.GetSystem<LifetimeSystem>().Update(deltaTime);
-	
+
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
 	msPassedUntilLastFrame = SDL_GetTicks64();

@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <string>
 #include <algorithm>
 #include <typeindex>
@@ -70,11 +71,6 @@ Registry::~Registry() {
 }
 
 void Registry::Update() {
-	for (auto entity : entitesToBeAdded) {
-		AddEntityToSystems(entity);
-	}
-	entitesToBeAdded.clear();
-
 	for (auto entity : entitiesToBeKilled) {
 		RemoveEntityFromSystems(entity);
 		entityComponentSignatures[entity.id].reset();
@@ -83,6 +79,11 @@ void Registry::Update() {
 		freeIDs.push_back(entity.id);
 	}
 	entitiesToBeKilled.clear();
+
+	for (auto entity : entitesToBeAdded) {
+		AddEntityToSystems(entity);
+	}
+	entitesToBeAdded.clear();
 }
 
 Entity Registry::CreateEntity() {
@@ -109,10 +110,20 @@ void Registry::KillEntity(Entity entity) {
 	entitiesToBeKilled.push_back(entity);
 }
 
+// void Registry::ClearEntities() {
+// 	for (int i = 0; i < numOfEntites; i++) {
+// 		entitiesToBeKilled.emplace_back(i);
+// 	}
+// }
+
 void Registry::ClearEntities() {
-	for (int i = 0; i < numOfEntites; i++) {
-		entitiesToBeKilled.emplace_back(i);
-	}
+    // assume entityComponentSignatures.size() == max possible entity ID count
+    for (int id = 0; id < (int)entityComponentSignatures.size(); ++id) {
+        // if this slot actually has any components, it’s “alive”
+        if (entityComponentSignatures[id].any()) {
+            entitiesToBeKilled.emplace_back(id);
+        }
+    }
 }
 
 void Registry::AddEntityToSystems(Entity entity) {

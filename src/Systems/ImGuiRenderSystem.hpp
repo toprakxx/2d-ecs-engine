@@ -65,9 +65,7 @@ public:
 		}
 		ImGui::End();
 
-		for (int i = 0; i < registry.numOfEntites; i++) {
-			Entity entity(i);  // or however you wrap entity IDs
-
+		for (auto entity : GetSystemEntities()) {
 			//Maybe add check to make sure this id is not in freeIds
 			if (!entity.HasComponent<TransformComponent>()) continue;
 

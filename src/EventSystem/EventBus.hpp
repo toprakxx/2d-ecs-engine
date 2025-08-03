@@ -1,9 +1,9 @@
 #pragma once
 #include <functional>
+#include <memory>
 #include <typeindex>
-#include <string>
+#include <deque>
 #include "./Event.h"
-#include "../Logger/Logger.h"
 
 class EventBus {
 public:

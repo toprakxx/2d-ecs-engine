@@ -22,8 +22,13 @@ void SceneLoader::LoadScene(Scenes level) {
 	switch (level) {
 	case StartMenu: {
 			int midX = Game::windowWidth/2.0;
-			Entity start = Registry->CreateEntity();
 			SDL_Color white = {255, 255, 255};
+
+			Entity title = Registry->CreateEntity();
+			title.AddComponent<TransformComponent>(glm::vec2(midX, 300));
+			title.AddComponent<TextComponent>("Jumpy Avian", "pico-80", white, TopCenter);
+
+			Entity start = Registry->CreateEntity();
 			start.AddComponent<TransformComponent>(glm::vec2(midX,500));
 			start.AddComponent<TextComponent>("Start", "pico-40", white, TopCenter);
 			start.AddComponent<UIButtonComponent>(200,50,[this](){
@@ -85,30 +90,31 @@ void SceneLoader::LoadScene(Scenes level) {
 	case DeathScreen: {
 			SDL_Color white = {255, 255, 255};
 			SDL_Color red = {255, 0, 0};
+			int midX = Game::windowWidth/2.0;
 
 			// "You Died" text
 			Entity deathText = Registry->CreateEntity();
-			deathText.AddComponent<TransformComponent>(glm::vec2(700, 350)); // center-ish top
-			deathText.AddComponent<TextComponent>("You Died", "pico-60", red);
+			deathText.AddComponent<TransformComponent>(glm::vec2(midX, 350));
+			deathText.AddComponent<TextComponent>("You Died", "pico-60", red, TopCenter);
 
 			// Restart button
 			Entity restart = Registry->CreateEntity();
-			restart.AddComponent<TransformComponent>(glm::vec2(800, 500));
-			restart.AddComponent<TextComponent>("Restart", "pico-40", white);
+			restart.AddComponent<TransformComponent>(glm::vec2(midX, 500));
+			restart.AddComponent<TextComponent>("Restart", "pico-40", white, TopCenter);
 			restart.AddComponent<UIButtonComponent>(300, 50, [this]() {
 				UnloadCurrentScene();
 				LoadScene(Gameplay);   // restart game
-			});
+			}, glm::vec2(-150, 0));
 
 			// Quit button
 			Entity quit = Registry->CreateEntity();
-			quit.AddComponent<TransformComponent>(glm::vec2(850, 600));
-			quit.AddComponent<TextComponent>("Quit", "pico-40", white);
+			quit.AddComponent<TransformComponent>(glm::vec2(midX, 600));
+			quit.AddComponent<TextComponent>("Quit", "pico-40", white, TopCenter);
 			quit.AddComponent<UIButtonComponent>(200, 50, []() {
 				SDL_Event e;
 				e.type = SDL_QUIT;
 				SDL_PushEvent(&e);
-			});
+			}, glm::vec2(-100, 0));
 
 			break;
 		}

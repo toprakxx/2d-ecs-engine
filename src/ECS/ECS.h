@@ -151,8 +151,8 @@ public:
 	bool EntityHasTag(Entity entity, Tag tag);
 	std::vector<Entity>* u_GetEntitiesWithTag(Tag tag);
 
-	int numOfEntites = 0;
 private:
+	int numOfEntites = 0;
 	//vector index == component type id, pool index == entity id
 	//[][] would first go to the data pool belonging to a component type
 	//and access the specific data of that component type belonging to an entity
