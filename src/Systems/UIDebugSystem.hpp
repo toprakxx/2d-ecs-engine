@@ -17,8 +17,8 @@ public:
 			const auto& button = e.GetComponent<UIButtonComponent>();
 
 			SDL_Rect colliderRect = {
-				static_cast<int>(transform.position.x - camera.x),
-				static_cast<int>(transform.position.y - camera.y),
+				static_cast<int>(transform.position.x - camera.x + button.offset.x),
+				static_cast<int>(transform.position.y - camera.y + button.offset.y),
 				static_cast<int>(button.width),
 				static_cast<int>(button.height)
 			};

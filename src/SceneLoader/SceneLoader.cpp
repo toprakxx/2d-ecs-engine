@@ -21,23 +21,24 @@ void SceneLoader::UnloadCurrentScene() {
 void SceneLoader::LoadScene(Scenes level) {
 	switch (level) {
 	case StartMenu: {
+			int midX = Game::windowWidth/2.0;
 			Entity start = Registry->CreateEntity();
 			SDL_Color white = {255, 255, 255};
-			start.AddComponent<TransformComponent>(glm::vec2(800,500));
-			start.AddComponent<TextComponent>("Start", "pico-40", white);
-			start.AddComponent<UIButtonComponent>(200,50, [this](){
+			start.AddComponent<TransformComponent>(glm::vec2(midX,500));
+			start.AddComponent<TextComponent>("Start", "pico-40", white, TopCenter);
+			start.AddComponent<UIButtonComponent>(200,50,[this](){
 				UnloadCurrentScene();
 				LoadScene(Gameplay);
-			});
+			},glm::vec2(-100, 0));
 
 			Entity quit = Registry->CreateEntity();
-			quit.AddComponent<TransformComponent>(glm::vec2(800,600));
-			quit.AddComponent<TextComponent>("Quit", "pico-40", white);
+			quit.AddComponent<TransformComponent>(glm::vec2(midX,600));
+			quit.AddComponent<TextComponent>("Quit", "pico-40", white, TopCenter);
 			quit.AddComponent<UIButtonComponent>(200,50,[](){
 				SDL_Event e;
 				e.type = SDL_QUIT;
 				SDL_PushEvent(&e);
-			});
+			}, glm::vec2(-100,0));
 
 			break;
 		}

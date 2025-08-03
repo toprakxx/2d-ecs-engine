@@ -209,7 +209,9 @@ void Game::Update() {
 }
 
 void Game::Render() {
-	SDL_Color background = {150, 150, 0, SDL_ALPHA_OPAQUE};
+	// SDL_Color background = {150, 150, 0, SDL_ALPHA_OPAQUE};
+	// SDL_Color background = {173, 216, 230, SDL_ALPHA_OPAQUE};
+	SDL_Color background = {135, 206, 235, SDL_ALPHA_OPAQUE};
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b , background.a);
 	SDL_RenderClear(renderer);
 

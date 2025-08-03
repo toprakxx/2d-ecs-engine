@@ -45,7 +45,7 @@ public:
 			int scoreYPos = bottom.GetComponent<TransformComponent>().position.y - psc.gap + 10;
 			Entity score = Registry::registry->CreateEntity();
 			score.AddComponent<TransformComponent>(glm::vec2(psc.pipeRightShift + 30, scoreYPos));
-			score.AddComponent<ColliderComponent>(Box, glm::vec2(0), 100, psc.gap - 20);
+			score.AddComponent<ColliderComponent>(Box, glm::vec2(90,0), 10, psc.gap - 20);
 			score.AddComponent<RigidBodyComponent>(glm::vec2(-psc.pipeMoveSpeed, 0));
 			score.AddTag(Score);
 			score.AddComponent<LifetimeComponent>(psc.pipeLife);
