@@ -6,7 +6,7 @@
 #include "../Components/PlayerControlComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
-#include "../Components/AnimationComponent.h"
+#include "../EventSystem/Events/SoundEffectEvent.h"
 
 class PlayerControllerSystem : public System {
 public:
@@ -16,7 +16,7 @@ public:
 		RequireComponent<RigidBodyComponent>();
 	}
 
-	void Update(const InputManager& input, SceneLoader& sceneLoader) {
+	void Update(const InputManager& input, SceneLoader& sceneLoader, EventBus& eb) {
 		for (auto e : GetSystemEntities()) {
 			auto& rb = e.GetComponent<RigidBodyComponent>();
 			auto& pcc = e.GetComponent<PlayerControlComponent>();
@@ -25,6 +25,7 @@ public:
 			if(input.isKeyPressed(KEY_SPACE) and pcc.isAlive) {
 				rb.velocity.y = pcc.jumpSpeed;
 				ChangeAnimation(e, "Flap");
+				eb.EmitEvent<SoundEffectEvent>("jump-sound");
 			}
 
 			if(rb.velocity.y >= 0) {

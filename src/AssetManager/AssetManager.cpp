@@ -2,6 +2,7 @@
 #include <cstddef>
 #include "./AssetManager.h"
 #include "../Logger/Logger.h"
+#include "SDL_mixer.h"
 #include "SDL_render.h"
 #include "SDL_surface.h"
 #include "SDL_ttf.h"
@@ -25,6 +26,11 @@ void AssetManager::ClearAssets() {
 		TTF_CloseFont(font.second);
 	}
 	fonts.clear();
+
+	for (auto sfx : soundEffects) {
+		Mix_FreeChunk(sfx.second);
+	}
+	soundEffects.clear();
 }
 
 void AssetManager::AddTexture(SDL_Renderer* renderer, const std::string_view& assetName, const std::string& filePath) { 
@@ -52,5 +58,18 @@ void AssetManager::AddFont(const std::string_view& fontName, const std::string& 
 TTF_Font* AssetManager::GetFont(const std::string& fontName) { 
 	auto it = fonts.find(fontName);
 	Logger::Assert((it != fonts.end()), "Non existent font name: " + fontName);
+	return it->second;
+}
+
+void  AssetManager::AddSFX(const std::string_view& sfxName, const std::string& filePath) {
+	auto address = ASSETS_PATH"sound-effects/" + filePath;
+	Mix_Chunk* sfx = Mix_LoadWAV( address.c_str());
+	if(!sfx) Logger::Err("Failed to load sfx at: " + address + " .With possible error: " + Mix_GetError());
+	soundEffects.emplace(sfxName, sfx);
+}
+
+Mix_Chunk* AssetManager::GetSFX(const std::string& sfxName) {
+	auto it = soundEffects.find(sfxName);
+	Logger::Assert((it != soundEffects.end()), "Non existent font name: " + sfxName);
 	return it->second;
 }

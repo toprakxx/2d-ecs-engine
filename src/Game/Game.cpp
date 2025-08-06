@@ -25,6 +25,8 @@
 #include "../Systems/PipeCollisionSytem.hpp"
 #include "../Systems/UIDebugSystem.hpp"
 #include "../Systems/LifetimeSystem.hpp"
+#include "../Systems/SoundEffectSystem.hpp"
+#include "SDL_events.h"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -135,6 +137,10 @@ void Game::SetUp() {
 	assetManager.AddFont("pico-60", "pico8.ttf", 60);
 	assetManager.AddFont("pico-80", "pico8.ttf", 80);
 
+	assetManager.AddSFX("hit-sound", "hitHurt.wav");
+	assetManager.AddSFX("jump-sound", "jump.wav");
+	assetManager.AddSFX("click-sound", "click.wav");
+
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
 	registry.AddSystem<AnimationSystem>();
@@ -151,6 +157,7 @@ void Game::SetUp() {
 	registry.AddSystem<PipeCollisionSystem>();
 	registry.AddSystem<UIDebugSystem>();
 	registry.AddSystem<LifetimeSystem>();
+	registry.AddSystem<SoundEffectSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -159,6 +166,7 @@ void Game::SetUp() {
 	registry.GetSystem<PlayerControllerSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<ScoreUpdateSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<PipeCollisionSystem>().SubscribeToEvents(eventBus, &sceneLoader);
+	registry.GetSystem<SoundEffectSystem>().SubscribeToEvents(eventBus, &assetManager);
 
 }
 
@@ -195,7 +203,7 @@ void Game::ProcessInput() {
 		}
 	}
 	//System dependent on input get updated here
-	registry.GetSystem<PlayerControllerSystem>().Update(inputManager, sceneLoader);
+	registry.GetSystem<PlayerControllerSystem>().Update(inputManager, sceneLoader, eventBus);
 	registry.GetSystem<UIButtonSystem>().Update(eventBus, camera, inputManager);
 }
 
