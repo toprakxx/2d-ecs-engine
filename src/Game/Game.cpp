@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include <glm/glm.hpp>
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_sdl2.h>
@@ -39,12 +40,24 @@ Game::~Game() {
 void Game::Initalize() {
 	//Resolution awareness
 	SDL_SetHint(SDL_HINT_WINDOWS_DPI_AWARENESS, "permonitorv2");
+
 	if(SDL_Init(SDL_INIT_EVERYTHING)) {
 		Logger::Err("Error initializing SDL.");
 	} 
 
-	if (TTF_Init() != 0) {
-		Logger::Err("Error initializing TTF");
+	if(TTF_Init() != 0) {
+		Logger::Err("Error initializing TTF.");
+		return;
+	}
+
+	// int flags = MIX_INIT_MP3;
+	// if(!Mix_Init(flags)) {
+	// 	Logger::Err("Error initializing MIXER with: " + std::string(Mix_GetError()));
+	// 	return;
+	// }
+	
+	if(Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1){
+		Logger::Err("Error initializing MIXER with: " + std::string(Mix_GetError()));
 		return;
 	}
 

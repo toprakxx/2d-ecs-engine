@@ -1,8 +1,6 @@
 #pragma once
 #include <functional>
-#include <memory>
 #include <typeindex>
-#include <deque>
 #include "./Event.h"
 
 class EventBus {
