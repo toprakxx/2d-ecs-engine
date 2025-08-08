@@ -8,13 +8,14 @@
 #include "../Components/RigidBodyComponent.h"
 #include "../EventSystem/EventBus.hpp"
 #include "../EventSystem/Events/CollisionEvent.h"
-#include "glm/geometric.hpp"
+#include "../EventSystem/Events/SoundEffectEvent.h"
 
 class PipeCollisionSystem : public System {
 public:
 	void SubscribeToEvents(EventBus& eventBus, SceneLoader* sceneLoader) {
 		eventBus.SubscribeToEvent<PipeCollisionSystem, CollisionEvent>(this, &PipeCollisionSystem::OnPipeCollision);
 		this->sceneLoader = sceneLoader;
+		this->eventBus = &eventBus;
 	}
 
 	void OnPipeCollision(CollisionEvent& e) {
@@ -44,6 +45,8 @@ public:
 			pRB.velocity = difference * 400.0f;
 
 			if(pCC.isAlive) {
+				Logger::Assert(eventBus, "EventBus null in pipe coll. sys.");
+				eventBus->EmitEvent<SoundEffectEvent>("hit-sound");
 				pCC.isAlive = false;
 				ChangeAnimation(player, "Dead");
 				Logger::Assert(sceneLoader, "SceneLoader null in pipe coll. sys.");
@@ -53,4 +56,5 @@ public:
 	}
 
 	SceneLoader* sceneLoader = nullptr;
+	EventBus* eventBus = nullptr;
 };

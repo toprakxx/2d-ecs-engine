@@ -7,6 +7,7 @@
 #include "../Components/TransformComponent.h"
 #include "../EventSystem/EventBus.hpp"
 #include "../EventSystem/Events/ButtonClickEvent.h"
+#include "../EventSystem/Events/SoundEffectEvent.h"
 
 class UIButtonSystem : public System {
 public:
@@ -30,6 +31,7 @@ public:
 			button.mouseHover = mouseHover;
 
 			if(mouseHover and input.isMousePressed(MOUSE_L)) {
+				eventBus.EmitEvent<SoundEffectEvent>("click-sound");
 				if(button.callback) button.callback();
 				eventBus.EmitEvent<ButtonClickedEvent>(e);
 			}
