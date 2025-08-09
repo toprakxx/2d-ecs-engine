@@ -44,9 +44,10 @@ public:
 
 			pRB.velocity = difference * 400.0f;
 
+			Logger::Assert(eventBus, "EventBus null in pipe coll. sys.");
+			eventBus->EmitEvent<SoundEffectEvent>("hit-sound");
+
 			if(pCC.isAlive) {
-				Logger::Assert(eventBus, "EventBus null in pipe coll. sys.");
-				eventBus->EmitEvent<SoundEffectEvent>("hit-sound");
 				pCC.isAlive = false;
 				ChangeAnimation(player, "Dead");
 				Logger::Assert(sceneLoader, "SceneLoader null in pipe coll. sys.");

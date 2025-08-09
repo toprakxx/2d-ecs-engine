@@ -15,7 +15,7 @@ source:
 
 build:
 	cd .\build
-	cmake --build .
+	cmake --build . --config Debug
 
 run:
 	".\build\Debug\main.exe"
@@ -26,9 +26,14 @@ clean:
 	mkdir build
 	rmdir /S /Q make
 	mkdir make
+	rmdir /S /Q GAME
+
+release:
+	cd ./build
+	cmake --build . --config Release
+	cmake --install . --config Release --prefix "../GAME"
 
 play:
-	mkdir
-	cd ..\build
-	cmake ..
-	".\build\Debug\main.exe"
+	release
+	cd ../GAME
+	".\main.exe"
