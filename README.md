@@ -5,9 +5,7 @@ A small 2D ECS engine I built to better understand low-level game programming an
 
 ## Demo
 Below is a little demo showing the current capabilities of the engine.  
-<video src="./showcase/bird-video.mp4" controls playsinline></video>
-<!-- ![video](./showcase/bird-video.mp4) -->
-<!-- ![flappy-bird-demo](./showcase/bird-demo.gif) -->
+![flappy-bird-demo](./showcase/bird-demo.gif)
 
 ## Features
 - AABB collision with sweep-and-prune broadphase
