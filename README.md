@@ -5,7 +5,7 @@ A small 2D ECS engine I built to better understand low-level game programming an
 
 ## Demo
 Below is a little demo showing the current capabilities of the engine.  
-<video src="[path/to/video.mp4](https://github.com/EnesAkkusci/2d-ecs-engine/blob/main/showcase/bird-video.mp4)" controls loop muted playsinline></video>
+https://github.com/user-attachments/assets/e6247c5e-ff3b-4034-a4af-c12142aa6e72
 <!-- ![flappy-bird-demo](./showcase/bird-demo.gif) -->
 
 ## Features
