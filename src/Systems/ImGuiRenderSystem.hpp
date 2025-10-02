@@ -5,7 +5,6 @@
 #include <imgui/imgui_impl_sdlrenderer2.h>
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
-#include "../Components/PlayerControlComponent.h"
 
 class ImGuiRenderSystem : public System {
 public:

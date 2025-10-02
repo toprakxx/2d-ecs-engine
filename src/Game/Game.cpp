@@ -18,11 +18,7 @@
 #include "../Systems/CameraFollowSystem.hpp"
 #include "../Systems/TextRenderSystem.hpp"
 #include "../Systems/ImGuiRenderSystem.hpp"
-#include "../Systems/PlayerControllerSystem.hpp"
 #include "../Systems/UIButtonSystem.hpp"
-#include "../Systems/PipeSpawnSystem.hpp"
-#include "../Systems/ScoreUpdateSystem.hpp"
-#include "../Systems/PipeCollisionSytem.hpp"
 #include "../Systems/UIDebugSystem.hpp"
 #include "../Systems/LifetimeSystem.hpp"
 #include "../Systems/SoundEffectSystem.hpp"
@@ -126,20 +122,14 @@ void Game::Run() {
 }
 
 void Game::SetUp() {
-	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
-	assetManager.AddTexture(renderer, "blue-man-walk", "blue-man-walk-sheet.png");
-	assetManager.AddTexture(renderer, "bird", "blue-bird-sheet.png");
-	assetManager.AddTexture(renderer, "bottom-pipe", "bottom-pipe.png");
-	assetManager.AddTexture(renderer, "top-pipe", "top-pipe.png");
+	//Adding textures
+	//asssetManager.AddTexture(renderer, "asset-name", "asset.png");
 
-	assetManager.AddFont("arial-40", "arial.ttf", 40);
-	assetManager.AddFont("pico-40", "pico8.ttf", 40);
-	assetManager.AddFont("pico-60", "pico8.ttf", 60);
-	assetManager.AddFont("pico-80", "pico8.ttf", 80);
+	//Adding fonts
+	//assetManager.AddFont("font-name", "font.ttf", font-size);
 
-	assetManager.AddSFX("hit-sound", "hitHurt.wav");
-	assetManager.AddSFX("jump-sound", "jump.wav");
-	assetManager.AddSFX("click-sound", "click.wav");
+	//Adding sound effects
+	//assetManager.AddSFX("sfx-name","sfx.wav");
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
@@ -150,11 +140,7 @@ void Game::SetUp() {
 	registry.AddSystem<CameraFollowSystem>();
 	registry.AddSystem<TextRenderSystem>();
 	registry.AddSystem<ImGuiRenderSystem>();
-	registry.AddSystem<PlayerControllerSystem>();
 	registry.AddSystem<UIButtonSystem>();
-	registry.AddSystem<PipeSpawnSystem>();
-	registry.AddSystem<ScoreUpdateSystem>();
-	registry.AddSystem<PipeCollisionSystem>();
 	registry.AddSystem<UIDebugSystem>();
 	registry.AddSystem<LifetimeSystem>();
 	registry.AddSystem<SoundEffectSystem>();
@@ -163,11 +149,7 @@ void Game::SetUp() {
 
 	//Systems that subscribe to events do so here
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
-	registry.GetSystem<PlayerControllerSystem>().SubscribeToEvents(eventBus);
-	registry.GetSystem<ScoreUpdateSystem>().SubscribeToEvents(eventBus);
-	registry.GetSystem<PipeCollisionSystem>().SubscribeToEvents(eventBus, &sceneLoader);
 	registry.GetSystem<SoundEffectSystem>().SubscribeToEvents(eventBus, &assetManager);
-
 }
 
 void Game::ProcessInput() {
@@ -203,7 +185,6 @@ void Game::ProcessInput() {
 		}
 	}
 	//System dependent on input get updated here
-	registry.GetSystem<PlayerControllerSystem>().Update(inputManager, sceneLoader, eventBus);
 	registry.GetSystem<UIButtonSystem>().Update(eventBus, camera, inputManager);
 }
 
@@ -220,8 +201,6 @@ void Game::Update() {
 	registry.GetSystem<AnimationSystem>().Update(deltaTime, eventBus);
 	registry.GetSystem<CollisionSystem>().Update(eventBus);
 	registry.GetSystem<CameraFollowSystem>().Update(camera);
-	registry.GetSystem<PipeSpawnSystem>().Update(deltaTime);
-	registry.GetSystem<ScoreUpdateSystem>().Update();
 	// registry.GetSystem<LifetimeSystem>().Update(deltaTime);
 
 	//Time passed between last and this frame. (Converted from ms to seconds)
@@ -230,8 +209,6 @@ void Game::Update() {
 }
 
 void Game::Render() {
-	// SDL_Color background = {150, 150, 0, SDL_ALPHA_OPAQUE};
-	// SDL_Color background = {173, 216, 230, SDL_ALPHA_OPAQUE};
 	SDL_Color background = {135, 206, 235, SDL_ALPHA_OPAQUE};
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b , background.a);
 	SDL_RenderClear(renderer);
@@ -257,7 +234,4 @@ void Game::Destroy() {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
-}
-
-void LoadGameplay() {
 }
