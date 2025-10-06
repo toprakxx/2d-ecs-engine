@@ -1,5 +1,5 @@
 # 2D ECS Engine
-A small 2D ECS engine I built to better understand low-level game programming and engine design. This was also a exercise in "Modern C++" with things like variadic templates, smart pointers, perfect forwarding and other more esoteric features of the standard library.  
+A small 2D ECS engine I built to better understand low-level game programming and engine design. This was also a introductory exercise in "Modern C++" with things like variadic templates, smart pointers, perfect forwarding etc. 
 **Libraries:** SDL2, SDL2_mixer, SDL2_image, ImGui, GLM
 
 
