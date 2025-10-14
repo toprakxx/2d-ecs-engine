@@ -44,7 +44,7 @@ void AssetManager::AddTexture(SDL_Renderer* renderer, const std::string_view& as
 
 SDL_Texture* AssetManager::GetTexture(const std::string& assetName) { 
 	auto it = textures.find(assetName);
-	Logger::Assert((it != textures.end()), "Non existent font name: " + assetName);
+	Logger::Assert((it != textures.end()), "Non existent asset name: " + assetName);
 	return it->second;
 }
 

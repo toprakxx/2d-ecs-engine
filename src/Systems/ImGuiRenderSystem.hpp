@@ -49,6 +49,18 @@ public:
 		// }
 		// ImGui::End(); //Comment out for demo window
 
+		if(ImGui::Begin("Blue Man")){
+			if(ImGui::Button("Kill blue man")) {
+				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Player);
+				if(entities) {
+					for (Entity e : *entities) {
+						e.Kill();
+					}
+				}
+			}
+		}
+		ImGui::End();
+
 		// Display a small overlay window to display the map position using the mouse
 		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav;
 		ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always, ImVec2(0, 0));

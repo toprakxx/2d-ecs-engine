@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include "SDL_events.h"
 #include <SDL_mixer.h>
 #include <glm/glm.hpp>
 #include <imgui/imgui.h>
@@ -22,7 +23,8 @@
 #include "../Systems/UIDebugSystem.hpp"
 #include "../Systems/LifetimeSystem.hpp"
 #include "../Systems/SoundEffectSystem.hpp"
-#include "SDL_events.h"
+#include "../Systems/ParentSystem.hpp"
+#include "../Systems/PlayerControlSystem.hpp"
 
 int Game::windowHeight;
 int Game::windowWidth;
@@ -124,6 +126,8 @@ void Game::Run() {
 void Game::SetUp() {
 	//Adding textures
 	//asssetManager.AddTexture(renderer, "asset-name", "asset.png");
+	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
+	assetManager.AddTexture(renderer, "pipe", "bottom-pipe.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
@@ -144,6 +148,8 @@ void Game::SetUp() {
 	registry.AddSystem<UIDebugSystem>();
 	registry.AddSystem<LifetimeSystem>();
 	registry.AddSystem<SoundEffectSystem>();
+	registry.AddSystem<ParentSystem>();
+	registry.AddSystem<PlayerControlSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -186,6 +192,7 @@ void Game::ProcessInput() {
 	}
 	//System dependent on input get updated here
 	registry.GetSystem<UIButtonSystem>().Update(eventBus, camera, inputManager);
+	registry.GetSystem<PlayerControlSystem>().Update(inputManager);
 }
 
 void Game::Update() {
@@ -202,6 +209,7 @@ void Game::Update() {
 	registry.GetSystem<CollisionSystem>().Update(eventBus);
 	registry.GetSystem<CameraFollowSystem>().Update(camera);
 	// registry.GetSystem<LifetimeSystem>().Update(deltaTime);
+	registry.GetSystem<ParentSystem>().Update();
 
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
