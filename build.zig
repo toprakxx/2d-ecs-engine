@@ -13,7 +13,7 @@ fn addSourceFilesRecursive(b: *std.Build, step: *std.Build.Step.Compile, path: [
         if (entry.kind == .file and std.mem.endsWith(u8, entry.path, extension)) {
             step.addCSourceFile(.{
                 .file = b.path(b.pathJoin(&.{ path, entry.path })),
-                .flags = &[_][]const u8{},
+                .flags = &[_][]const u8{"-std=c++20"},
             });
         }
     }
@@ -42,8 +42,15 @@ pub fn build(b: *std.Build) void {
         std.debug.print("Failed to add C/C++ Source Files: {}", .{err});
     };
 
+    exe.addIncludePath(b.path("libs/header"));
+    exe.addIncludePath(b.path("libs/compiled/SDL2/include"));
+
     // Link static and dynamic libs
+    exe.linkSystemLibrary("c++");
     exe.linkSystemLibrary("SDL2");
+    exe.linkSystemLibrary("SDL2_image");
+    exe.linkSystemLibrary("SDL2_ttf");
+    exe.linkSystemLibrary("SDL2_mixer");
     exe.linkSystemLibrary("lua");
 
     b.installArtifact(exe);
