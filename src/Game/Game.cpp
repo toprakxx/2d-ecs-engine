@@ -22,6 +22,8 @@
 #include "../Systems/UIDebugSystem.hpp"
 #include "../Systems/LifetimeSystem.hpp"
 #include "../Systems/SoundEffectSystem.hpp"
+#include "../Systems/PlayerControlSystem.hpp"
+#include "../Systems/ObstacleCollisionSystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -124,6 +126,7 @@ void Game::Run() {
 void Game::SetUp() {
 	//Adding textures
 	//asssetManager.AddTexture(renderer, "asset-name", "asset.png");
+	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
@@ -144,12 +147,15 @@ void Game::SetUp() {
 	registry.AddSystem<UIDebugSystem>();
 	registry.AddSystem<LifetimeSystem>();
 	registry.AddSystem<SoundEffectSystem>();
+	registry.AddSystem<PlayerControlSystem>();
+	registry.AddSystem<ObstacleCollisionSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
 	//Systems that subscribe to events do so here
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<SoundEffectSystem>().SubscribeToEvents(eventBus, &assetManager);
+	registry.GetSystem<ObstacleCollisionSystem>().SubscribeToEvents(eventBus);
 }
 
 void Game::ProcessInput() {
@@ -186,6 +192,7 @@ void Game::ProcessInput() {
 	}
 	//System dependent on input get updated here
 	registry.GetSystem<UIButtonSystem>().Update(eventBus, camera, inputManager);
+	registry.GetSystem<PlayerControlSystem>().Update(inputManager);
 }
 
 void Game::Update() {
@@ -209,7 +216,8 @@ void Game::Update() {
 }
 
 void Game::Render() {
-	SDL_Color background = {135, 206, 235, SDL_ALPHA_OPAQUE};
+	// SDL_Color background = {135, 206, 235, SDL_ALPHA_OPAQUE};
+	SDL_Color background = {0, 0, 0, SDL_ALPHA_OPAQUE};
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b , background.a);
 	SDL_RenderClear(renderer);
 
