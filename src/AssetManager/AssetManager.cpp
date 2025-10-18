@@ -44,7 +44,11 @@ void AssetManager::AddTexture(SDL_Renderer* renderer, const std::string_view& as
 
 SDL_Texture* AssetManager::GetTexture(const std::string& assetName) { 
 	auto it = textures.find(assetName);
+
+	#ifdef DEBUG
 	Logger::Assert((it != textures.end()), "Non existent asset name: " + assetName);
+	#endif
+
 	return it->second;
 }
 

@@ -1,6 +1,8 @@
 #pragma once
 #include <SDL.h>
 
+// #define DEBUG
+
 enum Tag {
 	Player,
 	Enemy,

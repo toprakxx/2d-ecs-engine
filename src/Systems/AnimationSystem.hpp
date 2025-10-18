@@ -18,7 +18,9 @@ public:
 			AnimationComponent& animationComponent = entity.GetComponent<AnimationComponent>();
 			auto& animation = animationComponent.currentAnimation;
 
+			#ifdef DEBUG
 			Logger::Assert(animation.frameCount > 0, "Animation with 0 frame count.");
+			#endif
 
 			animation.frameTimer -= deltaTime;
 			if(animation.frameTimer <= 0) {

@@ -162,9 +162,51 @@ void SceneLoader::LoadScene(Scenes level) {
 			//---//Ground//---//
 			int xg = (int) Game::windowWidth / 2;
 			int yg = (int) Game::windowHeight / 2;
+
+			//main room
 			CreateRoom(11, 11, InTiles(-5, -5), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			//up corridor
 			CreateRoom(5, 10, InTiles(-2, -15), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+			//down corriodr
 			CreateRoom(5, 10, InTiles(-2, 6), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+			//right corr
+			CreateRoom(10, 5, InTiles(6, -2), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("1010"), 3);
+			//left corr
+			CreateRoom(10, 5, InTiles(-15, -2), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("1010"), 3);
+
+			//u1 room
+			CreateRoom(11, 11, InTiles(-5, -26), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+
+			//d1 room
+			CreateRoom(11, 11, InTiles(-5, 16), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			//d1 down corr
+			CreateRoom(5, 10, InTiles(-2, 27), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+			//d1 right corr
+			CreateRoom(10, 5, InTiles(6, 19), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("1010"), 3);
+
+			//d1r1 room
+			CreateRoom(11, 11, InTiles(16, 16), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+
+			//d2 room
+			CreateRoom(11, 11, InTiles(-5, 37), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+
+			//l1 room
+			CreateRoom(11, 11, InTiles(-26, -5), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			//l1 left corr
+			CreateRoom(10, 5, InTiles(-36, -2), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("1010"), 3);
+			//l1 down corr
+			CreateRoom(5, 10, InTiles(-23, 6), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+
+			//l1d1 room
+			CreateRoom(11, 11, InTiles(-26, 16), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+
+			//l2 room
+			CreateRoom(11, 11, InTiles(-47, -5), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			//l2 down corr
+			CreateRoom(5, 10, InTiles(-44, 6), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+
+			//l2d1 room
+			CreateRoom(11, 11, InTiles(-47, 16), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
 
 			break;
 		}
