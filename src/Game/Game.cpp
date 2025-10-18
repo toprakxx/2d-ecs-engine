@@ -127,6 +127,8 @@ void Game::SetUp() {
 	//Adding textures
 	//asssetManager.AddTexture(renderer, "asset-name", "asset.png");
 	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
+	assetManager.AddTexture(renderer, "metal-ground", "pretiles.png");
+	assetManager.AddTexture(renderer, "time-bot", "TimeBotSpriteSheet4-4-4.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);

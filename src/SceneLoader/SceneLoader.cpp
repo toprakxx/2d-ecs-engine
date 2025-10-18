@@ -21,11 +21,14 @@ void SceneLoader::LoadScene(Scenes level) {
 			//Entity entity = Registry->CreateEntity();
 			//entity.AddComponent<ComponentType>(args);
 
+			const int SCALE_FACTOR_32 = 2;
+			const int SCALE_FACTOR_16 = 10;
+
 			//---//Player//---//
 			Entity player = Registry->CreateEntity();
 			player.AddComponent<TransformComponent>(
 				glm::vec2(Game::windowWidth/2, Game::windowHeight/2),
-				glm::vec2(10)
+				glm::vec2(SCALE_FACTOR_16)
 			);
 			player.AddComponent<SpriteComponent>("blue-man", 16, 16, 5);
 			player.AddComponent<RigidBodyComponent>(
@@ -36,7 +39,7 @@ void SceneLoader::LoadScene(Scenes level) {
 				Box,
 				glm::vec2(40,0),
 				80,
-				160
+				16 * SCALE_FACTOR_16
 			);
 			player.AddTag(Player);
 
@@ -44,14 +47,14 @@ void SceneLoader::LoadScene(Scenes level) {
 			Entity wall = Registry->CreateEntity();
 			wall.AddComponent<TransformComponent>(
 				glm::vec2(Game::windowWidth/2 + 100, Game::windowHeight/2 + 100),
-				glm::vec2(10)
+				glm::vec2(SCALE_FACTOR_32)
 			);
-			wall.AddComponent<SpriteComponent>("blue-man", 16, 16, 5);
+			wall.AddComponent<SpriteComponent>("metal-ground", 32, 32, 5);
 			wall.AddComponent<ColliderComponent>(
 				Box,
-				glm::vec2(40,0),
-				80,
-				160
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
 			);
 			wall.AddTag(Obstacle);
 
