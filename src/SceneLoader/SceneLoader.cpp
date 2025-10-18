@@ -15,6 +15,11 @@ void SceneLoader::UnloadCurrentScene() {
 	Registry->ClearEntities();
 }
 
+inline int PseudoRandomTileOffset(int x, int y, int range) {
+    unsigned h = x * 73856093u ^ y * 19349663u;
+    return int(h % range);
+}
+
 void SceneLoader::LoadScene(Scenes level) {
 	switch (level) {
 	case StartMenu: {
@@ -60,7 +65,7 @@ void SceneLoader::LoadScene(Scenes level) {
 				glm::vec2(Game::windowWidth/2 + 100, Game::windowHeight/2 + 100),
 				glm::vec2(SCALE_FACTOR_32)
 			);
-			wall.AddComponent<SpriteComponent>("metal-ground", 32, 32, 5);
+			wall.AddComponent<SpriteComponent>("metal-ground", 32, 32, 5, false, 32*5, 0);
 			wall.AddComponent<ColliderComponent>(
 				Box,
 				glm::vec2(0,0),
@@ -68,6 +73,18 @@ void SceneLoader::LoadScene(Scenes level) {
 				32 * SCALE_FACTOR_32
 			);
 			wall.AddTag(Obstacle);
+
+			//---//Ground//---//
+			for (int y = 0; y < 640; y += 64){
+				for (int x = 0; x < 640; x += 64) {
+					Entity tile = Registry->CreateEntity();
+					tile.AddComponent<TransformComponent>(
+						glm::vec2(x, y),
+						glm::vec2(SCALE_FACTOR_32)
+					);
+					tile.AddComponent<SpriteComponent>("metal-ground", 32, 32, 0, false, 32*PseudoRandomTileOffset(x, y, 5), 0);
+				}
+			}
 
 			break;
 		}
