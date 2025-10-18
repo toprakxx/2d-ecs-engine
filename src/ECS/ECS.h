@@ -2,7 +2,6 @@
 #include <deque>
 #include <memory>
 #include <bitset>
-#include <queue>
 #include <vector>
 #include <unordered_map>
 #include <string>
@@ -18,6 +17,7 @@ using Signature = std::bitset<MAX_COMPONENTS>;
 ////////////////////////////////////////////
 class Entity {
 public:
+	Entity() : id(-1) {};
 	Entity(int _id) : id(_id) {};
 	void Kill();
 
