@@ -49,32 +49,17 @@ public:
 		// }
 		// ImGui::End(); //Comment out for demo window
 
-		if(ImGui::Begin("Blue Man")){
-			if(ImGui::Button("Kill blue man")) {
-				std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Player);
-				if(entities) {
-					for (Entity e : *entities) {
-						e.Kill();
-					}
-				}
-			}
-		}
-		ImGui::End();
-
-		// Display a small overlay window to display the map position using the mouse
-		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav;
-		ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always, ImVec2(0, 0));
-		ImGui::SetNextWindowBgAlpha(0.9f);
-		if (ImGui::Begin("Map coordinates", NULL, windowFlags)) {
-			ImGui::Text(
-				"Mouse map coordinates (x=%.1f, y=%.1f)",
-				ImGui::GetIO().MousePos.x + camera.x,
-				ImGui::GetIO().MousePos.y + camera.y
-			);
-			ImGui::Text(
-				"FPS: %.1f", ImGui::GetIO().Framerate);
-		}
-		ImGui::End();
+		// if(ImGui::Begin("Blue Man")){
+		// 	if(ImGui::Button("Kill blue man")) {
+		// 		std::vector<Entity>* entities = registry.u_GetEntitiesWithTag(Player);
+		// 		if(entities) {
+		// 			for (Entity e : *entities) {
+		// 				e.Kill();
+		// 			}
+		// 		}
+		// 	}
+		// }
+		// ImGui::End();
 
 		for (auto entity : GetSystemEntities()) {
 			//Maybe add check to make sure this id is not in freeIds
@@ -101,6 +86,21 @@ public:
 			}
 			ImGui::End();
 		}
+
+		// Display a small overlay window to display the map position using the mouse
+		ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoNav;
+		ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always, ImVec2(0, 0));
+		ImGui::SetNextWindowBgAlpha(0.9f);
+		if (ImGui::Begin("Map coordinates", NULL, windowFlags)) {
+			ImGui::Text(
+				"Mouse map coordinates (x=%.1f, y=%.1f)",
+				ImGui::GetIO().MousePos.x + camera.x,
+				ImGui::GetIO().MousePos.y + camera.y
+			);
+			ImGui::Text(
+				"FPS: %.1f", ImGui::GetIO().Framerate);
+		}
+		ImGui::End();
 	
 		// ImGui::ShowDemoWindow();
 

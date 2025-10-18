@@ -26,6 +26,8 @@
 #include "../Systems/PlayerControlSystem.hpp"
 #include "../Systems/ObstacleCollisionSystem.hpp"
 #include "../Systems/PlayerAnimationSystem.hpp"
+#include "../Systems/ParentSystem.hpp"
+#include "../Systems/PlayerInteractionSystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -131,6 +133,7 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
 	assetManager.AddTexture(renderer, "metal-ground", "pretiles.png");
 	assetManager.AddTexture(renderer, "time-bot", "TimeBotSpriteSheet4-4-4.png");
+	assetManager.AddTexture(renderer, "metal-wall", "sujam6wall.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
@@ -154,6 +157,8 @@ void Game::SetUp() {
 	registry.AddSystem<PlayerControlSystem>();
 	registry.AddSystem<ObstacleCollisionSystem>();
 	registry.AddSystem<PlayerAnimationSystem>();
+	registry.AddSystem<ParentSystem>();
+	registry.AddSystem<PlayerInteractionSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -215,6 +220,8 @@ void Game::Update() {
 	registry.GetSystem<CameraFollowSystem>().Update(camera);
 	// registry.GetSystem<LifetimeSystem>().Update(deltaTime);
 	registry.GetSystem<PlayerAnimationSystem>().Update();
+	registry.GetSystem<ParentSystem>().Update();
+	registry.GetSystem<PlayerInteractionSystem>().Update();
 
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;

@@ -1,4 +1,5 @@
 #include "SceneLoader.h"
+#include "../Utils.hpp"
 #include "../ECS/ECS.h"
 #include "../ECS/ECS.h"
 #include "../Game/Game.h"
@@ -8,16 +9,79 @@
 #include "../Components/PlayerControlComponent.h"
 #include "../Components/ColliderComponent.h"
 #include "../Components/AnimationComponent.h"
+#include "../Components/ParentComponent.h"
+#include "../Components/CameraFollowComponent.h"
+#include "glm/fwd.hpp"
 
+//////////////////////////////////////////////////
+/// Helper Functions
+//////////////////////////////////////////////////
 auto &Registry = Registry::registry;
-
-void SceneLoader::UnloadCurrentScene() {
-	Registry->ClearEntities();
-}
 
 inline int PseudoRandomTileOffset(int x, int y, int range) {
     unsigned h = x * 73856093u ^ y * 19349663u;
     return int(h % range);
+}
+
+inline void CreateRoom(
+	int floorWidth, int floorHeight,
+	glm::vec2 startPos,
+	const std::string &floorTile, int floorTileRange,
+	const std::string &wallTile, int wallTileRange
+) {
+	const int TW = 32, TH = 32;
+	const int stepX = 32 * SCALE_FACTOR_32, stepY = 32 * SCALE_FACTOR_32;
+	const int x0 = startPos.x, y0 = startPos.y;
+
+	for (int ty = 0; ty < floorHeight; ++ty) {
+		for (int tx = 0; tx < floorWidth; ++tx) {
+			int x = x0 + (tx * stepX);
+			int y = y0 + (ty * stepY);
+
+			const bool border =
+				(tx == 0) || (tx == floorWidth - 1) ||
+				(ty == 0) || (ty == floorHeight - 1);
+
+            const bool useWall = border;
+            const int  range   = useWall ? wallTileRange : floorTileRange;
+            const auto& atlas  = useWall ? wallTile  : floorTile;
+
+            Entity e = Registry->CreateEntity();
+            e.AddComponent<TransformComponent>(glm::vec2(x, y), glm::vec2(SCALE_FACTOR_32));
+
+            int variant = (range > 0) ? PseudoRandomTileOffset(x, y, range) : 0;
+			e.AddComponent<SpriteComponent>(
+				atlas, TW, TH,
+				useWall ? 3 : 0,
+				false,
+				TW * variant,
+				0
+			);
+
+            if (useWall) {
+                e.AddComponent<ColliderComponent>(
+                    Box, glm::vec2(0,0),
+                    int(TW * SCALE_FACTOR_32), int(TH * SCALE_FACTOR_32)
+                );
+                e.AddTag(Obstacle);
+            }
+		}
+	}
+
+	// for (int x = startPos.x; x < startPos.x + (floorWidth * SCALE_FACTOR_32 * 32); x += 32 * SCALE_FACTOR_32) {
+	// 	for (int y = startPos.y; y < startPos.y + (floorHeight * SCALE_FACTOR_32 * 32); y += 32 * SCALE_FACTOR_32) {
+	// 				Entity tile = Registry->CreateEntity();
+	// 				tile.AddComponent<TransformComponent>(
+	// 					glm::vec2(x, y),
+	// 					glm::vec2(SCALE_FACTOR_32)
+	// 				);
+	// 				tile.AddComponent<SpriteComponent>(floorTile, 32, 32, 0, false, 32*PseudoRandomTileOffset(x, y, floorTileRange), 0);
+	// 	}
+	// }
+}
+
+void SceneLoader::UnloadCurrentScene() {
+	Registry->ClearEntities();
 }
 
 void SceneLoader::LoadScene(Scenes level) {
@@ -27,8 +91,19 @@ void SceneLoader::LoadScene(Scenes level) {
 			//Entity entity = Registry->CreateEntity();
 			//entity.AddComponent<ComponentType>(args);
 
-			const int SCALE_FACTOR_32 = 2;
-			const int SCALE_FACTOR_16 = 10;
+			//---//PlayerCast//---//
+			Entity playerInteractionCast = Registry->CreateEntity();
+			playerInteractionCast.AddComponent<TransformComponent>(
+				glm::vec2(0),
+				glm::vec2(1)
+			);
+			playerInteractionCast.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0),
+				PLAYER_INTERACTION_WIDTH,
+				PLAYER_INTERACTION_HEIGHT
+			);
+			playerInteractionCast.AddTag(PlayerInteractionCast);
 
 			//---//Player//---//
 			Entity player = Registry->CreateEntity();
@@ -57,6 +132,10 @@ void SceneLoader::LoadScene(Scenes level) {
 				32 * SCALE_FACTOR_32,
 				32 * SCALE_FACTOR_32
 			);
+			player.AddComponent<ParentComponent>(ParentComponent{
+				{playerInteractionCast, glm::vec2(0)},
+			});
+			player.AddComponent<CameraFollowComponent>();
 			player.AddTag(Player);
 
 			//---//Wall//---//
@@ -75,16 +154,7 @@ void SceneLoader::LoadScene(Scenes level) {
 			wall.AddTag(Obstacle);
 
 			//---//Ground//---//
-			for (int y = 0; y < 640; y += 64){
-				for (int x = 0; x < 640; x += 64) {
-					Entity tile = Registry->CreateEntity();
-					tile.AddComponent<TransformComponent>(
-						glm::vec2(x, y),
-						glm::vec2(SCALE_FACTOR_32)
-					);
-					tile.AddComponent<SpriteComponent>("metal-ground", 32, 32, 0, false, 32*PseudoRandomTileOffset(x, y, 5), 0);
-				}
-			}
+			CreateRoom(11, 11, {0,0}, "metal-ground", 5, "metal-wall", 1);
 
 			break;
 		}
