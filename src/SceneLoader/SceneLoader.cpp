@@ -13,10 +13,10 @@
 #include "../Components/CameraFollowComponent.h"
 #include "glm/fwd.hpp"
 
+auto &Registry = Registry::registry;
 //////////////////////////////////////////////////
 /// Helper Functions
 //////////////////////////////////////////////////
-auto &Registry = Registry::registry;
 
 inline int PseudoRandomTileOffset(int x, int y, int range) {
     unsigned h = x * 73856093u ^ y * 19349663u;
@@ -29,8 +29,9 @@ inline void CreateRoom(
     int wTiles, int hTiles,
     glm::vec2 startPos,
     const std::string& floorTile, int floorRange,
-    const std::string& wallTile,  int wallRange,
-    std::bitset<4> gaps,
+	bool haveWalls,
+    const std::string& wallTile = "",  int wallRange = 0,
+    std::bitset<4> gaps = std::bitset<4>(0),
     int doorWidthTiles = 3
 ) {
     const float S = SCALE_FACTOR_32;
@@ -56,7 +57,7 @@ inline void CreateRoom(
                 if (onRight  && gaps[RIGHT]  && std::abs(ty - cy) <= halfDoorY)    border = false;
             }
 
-            const bool useWall = border;
+            const bool useWall = haveWalls ? border : false;
             const int  range   = useWall ? wallRange : floorRange;
             const auto& atlas  = useWall ? wallTile  : floorTile;
 
@@ -77,6 +78,13 @@ inline void CreateRoom(
     }
 }
 
+inline glm::vec2 InTiles(float x, float y) {
+	return glm::vec2(32 * SCALE_FACTOR_32 * x, 32 * SCALE_FACTOR_32 * y);
+}
+
+//////////////////////////////////////////////////
+/// Member Functions
+//////////////////////////////////////////////////
 void SceneLoader::UnloadCurrentScene() {
 	Registry->ClearEntities();
 }
@@ -105,7 +113,8 @@ void SceneLoader::LoadScene(Scenes level) {
 			//---//Player//---//
 			Entity player = Registry->CreateEntity();
 			player.AddComponent<TransformComponent>(
-				glm::vec2(Game::windowWidth/2, Game::windowHeight/2),
+				// glm::vec2(Game::windowWidth/2 - 32, Game::windowHeight/2 - 32),
+				glm::vec2(0, 0),
 				glm::vec2(SCALE_FACTOR_32)
 			);
 			player.AddComponent<SpriteComponent>("time-bot", 32, 32, 5);
@@ -136,22 +145,26 @@ void SceneLoader::LoadScene(Scenes level) {
 			player.AddTag(Player);
 
 			//---//Wall//---//
-			Entity wall = Registry->CreateEntity();
-			wall.AddComponent<TransformComponent>(
-				glm::vec2(Game::windowWidth/2 + 100, Game::windowHeight/2 + 100),
-				glm::vec2(SCALE_FACTOR_32)
-			);
-			wall.AddComponent<SpriteComponent>("metal-ground", 32, 32, 5, false, 32*5, 0);
-			wall.AddComponent<ColliderComponent>(
-				Box,
-				glm::vec2(0,0),
-				32 * SCALE_FACTOR_32,
-				32 * SCALE_FACTOR_32
-			);
-			wall.AddTag(Obstacle);
+			// Entity wall = Registry->CreateEntity();
+			// wall.AddComponent<TransformComponent>(
+			// 	glm::vec2(Game::windowWidth/2 + 100, Game::windowHeight/2 + 100),
+			// 	glm::vec2(SCALE_FACTOR_32)
+			// );
+			// wall.AddComponent<SpriteComponent>("metal-ground", 32, 32, 5, false, 32*5, 0);
+			// wall.AddComponent<ColliderComponent>(
+			// 	Box,
+			// 	glm::vec2(0,0),
+			// 	32 * SCALE_FACTOR_32,
+			// 	32 * SCALE_FACTOR_32
+			// );
+			// wall.AddTag(Obstacle);
 
 			//---//Ground//---//
-			CreateRoom(11, 11, {0,0}, "metal-ground", 5, "metal-wall", 1, std::bitset<4>("1111"));
+			int xg = (int) Game::windowWidth / 2;
+			int yg = (int) Game::windowHeight / 2;
+			CreateRoom(11, 11, InTiles(-5, -5), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(5, 10, InTiles(-2, -15), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+			CreateRoom(5, 10, InTiles(-2, 6), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
 
 			break;
 		}

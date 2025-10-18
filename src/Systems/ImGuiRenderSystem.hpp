@@ -64,6 +64,7 @@ public:
 		for (auto entity : GetSystemEntities()) {
 			//Maybe add check to make sure this id is not in freeIds
 			if (!entity.HasComponent<TransformComponent>()) continue;
+			if (!entity.GetComponent<TransformComponent>().hasLabel) continue;
 
 			const auto& transform = entity.GetComponent<TransformComponent>();
 
