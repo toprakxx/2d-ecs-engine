@@ -24,6 +24,7 @@
 #include "../Systems/SoundEffectSystem.hpp"
 #include "../Systems/PlayerControlSystem.hpp"
 #include "../Systems/ObstacleCollisionSystem.hpp"
+#include "../Systems/PlayerAnimationSystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -151,6 +152,7 @@ void Game::SetUp() {
 	registry.AddSystem<SoundEffectSystem>();
 	registry.AddSystem<PlayerControlSystem>();
 	registry.AddSystem<ObstacleCollisionSystem>();
+	registry.AddSystem<PlayerAnimationSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -211,6 +213,7 @@ void Game::Update() {
 	registry.GetSystem<CollisionSystem>().Update(eventBus);
 	registry.GetSystem<CameraFollowSystem>().Update(camera);
 	// registry.GetSystem<LifetimeSystem>().Update(deltaTime);
+	registry.GetSystem<PlayerAnimationSystem>().Update();
 
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;
