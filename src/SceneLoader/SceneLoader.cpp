@@ -23,61 +23,58 @@ inline int PseudoRandomTileOffset(int x, int y, int range) {
     return int(h % range);
 }
 
+enum GapSide { TOP=0, RIGHT=1, BOTTOM=2, LEFT=3 };
+
 inline void CreateRoom(
-	int floorWidth, int floorHeight,
-	glm::vec2 startPos,
-	const std::string &floorTile, int floorTileRange,
-	const std::string &wallTile, int wallTileRange
+    int wTiles, int hTiles,
+    glm::vec2 startPos,
+    const std::string& floorTile, int floorRange,
+    const std::string& wallTile,  int wallRange,
+    std::bitset<4> gaps,
+    int doorWidthTiles = 3
 ) {
-	const int TW = 32, TH = 32;
-	const int stepX = 32 * SCALE_FACTOR_32, stepY = 32 * SCALE_FACTOR_32;
-	const int x0 = startPos.x, y0 = startPos.y;
+    const float S = SCALE_FACTOR_32;
+    const int TW = 32, TH = 32;
+    const int stepX = int(TW * S), stepY = int(TH * S);
+    const int x0 = int(startPos.x), y0 = int(startPos.y);
+    const int cx = wTiles / 2, cy = hTiles / 2;
+    const int halfDoorX = doorWidthTiles / 2;
+    const int halfDoorY = doorWidthTiles / 2;
 
-	for (int ty = 0; ty < floorHeight; ++ty) {
-		for (int tx = 0; tx < floorWidth; ++tx) {
-			int x = x0 + (tx * stepX);
-			int y = y0 + (ty * stepY);
+    for (int ty = 0; ty < hTiles; ++ty) {
+        for (int tx = 0; tx < wTiles; ++tx) {
+            const bool onLeft   = (tx == 0);
+            const bool onRight  = (tx == wTiles - 1);
+            const bool onTop    = (ty == 0);
+            const bool onBottom = (ty == hTiles - 1);
+            bool border = onLeft || onRight || onTop || onBottom;
 
-			const bool border =
-				(tx == 0) || (tx == floorWidth - 1) ||
-				(ty == 0) || (ty == floorHeight - 1);
+            if (border) {
+                if (onTop    && gaps[TOP]    && std::abs(tx - cx) <= halfDoorX)    border = false;
+                if (onBottom && gaps[BOTTOM] && std::abs(tx - cx) <= halfDoorX)    border = false;
+                if (onLeft   && gaps[LEFT]   && std::abs(ty - cy) <= halfDoorY)    border = false;
+                if (onRight  && gaps[RIGHT]  && std::abs(ty - cy) <= halfDoorY)    border = false;
+            }
 
             const bool useWall = border;
-            const int  range   = useWall ? wallTileRange : floorTileRange;
+            const int  range   = useWall ? wallRange : floorRange;
             const auto& atlas  = useWall ? wallTile  : floorTile;
 
+            const int x = x0 + tx * stepX;
+            const int y = y0 + ty * stepY;
+
             Entity e = Registry->CreateEntity();
-            e.AddComponent<TransformComponent>(glm::vec2(x, y), glm::vec2(SCALE_FACTOR_32));
+            e.AddComponent<TransformComponent>(glm::vec2(x, y), glm::vec2(S));
 
             int variant = (range > 0) ? PseudoRandomTileOffset(x, y, range) : 0;
-			e.AddComponent<SpriteComponent>(
-				atlas, TW, TH,
-				useWall ? 3 : 0,
-				false,
-				TW * variant,
-				0
-			);
+            e.AddComponent<SpriteComponent>(atlas, TW, TH, useWall ? 3 : 0, false, TW * variant, 0);
 
             if (useWall) {
-                e.AddComponent<ColliderComponent>(
-                    Box, glm::vec2(0,0),
-                    int(TW * SCALE_FACTOR_32), int(TH * SCALE_FACTOR_32)
-                );
+                e.AddComponent<ColliderComponent>(Box, glm::vec2(0,0), int(TW * S), int(TH * S));
                 e.AddTag(Obstacle);
             }
-		}
-	}
-
-	// for (int x = startPos.x; x < startPos.x + (floorWidth * SCALE_FACTOR_32 * 32); x += 32 * SCALE_FACTOR_32) {
-	// 	for (int y = startPos.y; y < startPos.y + (floorHeight * SCALE_FACTOR_32 * 32); y += 32 * SCALE_FACTOR_32) {
-	// 				Entity tile = Registry->CreateEntity();
-	// 				tile.AddComponent<TransformComponent>(
-	// 					glm::vec2(x, y),
-	// 					glm::vec2(SCALE_FACTOR_32)
-	// 				);
-	// 				tile.AddComponent<SpriteComponent>(floorTile, 32, 32, 0, false, 32*PseudoRandomTileOffset(x, y, floorTileRange), 0);
-	// 	}
-	// }
+        }
+    }
 }
 
 void SceneLoader::UnloadCurrentScene() {
@@ -154,7 +151,7 @@ void SceneLoader::LoadScene(Scenes level) {
 			wall.AddTag(Obstacle);
 
 			//---//Ground//---//
-			CreateRoom(11, 11, {0,0}, "metal-ground", 5, "metal-wall", 1);
+			CreateRoom(11, 11, {0,0}, "metal-ground", 5, "metal-wall", 1, std::bitset<4>("1111"));
 
 			break;
 		}
