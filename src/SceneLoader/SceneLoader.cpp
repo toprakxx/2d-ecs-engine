@@ -17,9 +17,9 @@
 #include "../Components/TextComponent.h"
 #include "../Components/PasswordManagerComponent.h"
 #include "../Components/ScientistComponent.h"
+#include "../Components/BigDoorComponent.h"
+#include "../Components/ControlPanelComponent.h"
 #include "glm/fwd.hpp"
-#include <bit>
-#include <iterator>
 
 auto &Registry = Registry::registry;
 //////////////////////////////////////////////////
@@ -449,7 +449,34 @@ void SceneLoader::LoadScene(Scenes level) {
 				32 * SCALE_FACTOR_32 * 3,
 				32 * SCALE_FACTOR_32
 			);
+			bigDoor.AddComponent<BigDoorComponent>();
 			bigDoor.AddTag(Obstacle);
+			Entity smallDoor = Registry->CreateEntity();
+			smallDoor.AddComponent<TransformComponent>(
+				glm::vec2(-64, -1472),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			smallDoor.AddComponent<SpriteComponent>(
+				"big-door", 96, 32, 3, false, 0, 32
+			);
+
+			//---//Control Panel//---//
+			Entity panel = Registry->CreateEntity();
+			panel.AddComponent<TransformComponent>(
+				glm::vec2(-128, -1408),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			panel.AddComponent<SpriteComponent>(
+				"control-panel", 32, 32, 3
+			);
+			panel.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			panel.AddComponent<ControlPanelComponent>();
+			panel.AddTag(Obstacle);
 
 			//---//Ground//---//
 			//main room

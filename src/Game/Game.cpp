@@ -32,6 +32,7 @@
 #include "../Systems/CollectibleSystem.hpp"
 #include "../Systems/PasswordManagerSystem.hpp"
 #include "../Systems/ScientistSystem.hpp"
+#include "../Systems/ControlPanelSystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -144,6 +145,7 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "scientist-2", "deadsci2.png");
 	assetManager.AddTexture(renderer, "scientist-3", "deadsci3.png");
 	assetManager.AddTexture(renderer, "big-door", "bigDoor.png");
+	assetManager.AddTexture(renderer, "control-panel", "computer.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
@@ -174,6 +176,7 @@ void Game::SetUp() {
 	registry.AddSystem<CollectibleSystem>();
 	registry.AddSystem<PassworManagerSystem>();
 	registry.AddSystem<ScientistSystem>();
+	registry.AddSystem<ControlPanelSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -184,6 +187,7 @@ void Game::SetUp() {
 	registry.GetSystem<DoorSystem>().SubscribeToEvents(eventBus, &inputManager);
 	registry.GetSystem<CollectibleSystem>().SubscribeToEvents(eventBus, &inputManager);
 	registry.GetSystem<ScientistSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
+	registry.GetSystem<ControlPanelSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
 }
 
 void Game::ProcessInput() {
