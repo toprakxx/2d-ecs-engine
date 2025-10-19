@@ -11,6 +11,8 @@ enum Tag {
 	Death,
 	PlayerInteractionCast,
 	Collectible,
+	Scientist,
+	PasswordManager,
 };
 
 enum Collider {

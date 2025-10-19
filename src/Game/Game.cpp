@@ -30,6 +30,8 @@
 #include "../Systems/PlayerInteractionSystem.hpp"
 #include "../Systems/DoorSystem.hpp"
 #include "../Systems/CollectibleSystem.hpp"
+#include "../Systems/PasswordManagerSystem.hpp"
+#include "../Systems/ScientistSystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -138,9 +140,11 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "garden-ground", "outFloor.png");
 	assetManager.AddTexture(renderer, "garden-wall", "outWalls.png");
 	assetManager.AddTexture(renderer, "misc", "miscStuff.png");
+	assetManager.AddTexture(renderer, "scientist-2", "deadsci2.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
+	assetManager.AddFont("pico-20", "pico8.ttf", 20);
 
 	//Adding sound effects
 	//assetManager.AddSFX("sfx-name","sfx.wav");
@@ -165,6 +169,8 @@ void Game::SetUp() {
 	registry.AddSystem<PlayerInteractionSystem>();
 	registry.AddSystem<DoorSystem>();
 	registry.AddSystem<CollectibleSystem>();
+	registry.AddSystem<PassworManagerSystem>();
+	registry.AddSystem<ScientistSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -174,6 +180,7 @@ void Game::SetUp() {
 	registry.GetSystem<ObstacleCollisionSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<DoorSystem>().SubscribeToEvents(eventBus, &inputManager);
 	registry.GetSystem<CollectibleSystem>().SubscribeToEvents(eventBus, &inputManager);
+	registry.GetSystem<ScientistSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
 }
 
 void Game::ProcessInput() {
@@ -230,6 +237,7 @@ void Game::Update() {
 	registry.GetSystem<PlayerAnimationSystem>().Update();
 	registry.GetSystem<ParentSystem>().Update();
 	registry.GetSystem<PlayerInteractionSystem>().Update();
+	registry.GetSystem<PassworManagerSystem>().Update();
 
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;

@@ -14,6 +14,9 @@
 #include "../Components/PlayerInventoryComponent.h"
 #include "../Components/DoorComponent.h"
 #include "../Components/CollectibleComponent.h"
+#include "../Components/TextComponent.h"
+#include "../Components/PasswordManagerComponent.h"
+#include "../Components/ScientistComponent.h"
 #include "glm/fwd.hpp"
 
 auto &Registry = Registry::registry;
@@ -108,6 +111,7 @@ void SceneLoader::UnloadCurrentScene() {
 void SceneLoader::LoadScene(Scenes level) {
 	switch (level) {
 	case StartMenu: {
+			SDL_Color white = {255, 255, 255};
 			//---//EntityName//---//
 			//Entity entity = Registry->CreateEntity();
 			//entity.AddComponent<ComponentType>(args);
@@ -298,6 +302,99 @@ void SceneLoader::LoadScene(Scenes level) {
 			);
 			bombDoor.AddComponent<DoorComponent>(BombDoor);
 			bombDoor.AddTag(Obstacle);
+
+			//---//Battery Room//---//
+			Entity rw0 = Registry->CreateEntity();
+			rw0.AddComponent<TransformComponent>(
+				glm::vec2(128, -1600),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			rw0.AddComponent<SpriteComponent>(
+				"metal-wall", 32, 32, 5
+			);
+			rw0.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32 * 3
+			);
+			rw0.AddTag(Obstacle);
+			Entity rw1 = Registry->CreateEntity();
+			rw1.AddComponent<TransformComponent>(
+				glm::vec2(128, -1536),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			rw1.AddComponent<SpriteComponent>(
+				"metal-wall", 32, 32, 5
+			);
+			Entity rw2 = Registry->CreateEntity();
+			rw2.AddComponent<TransformComponent>(
+				glm::vec2(128, -1472),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			rw2.AddComponent<SpriteComponent>(
+				"metal-wall", 32, 32, 5
+			);
+
+			Entity lw0 = Registry->CreateEntity();
+			lw0.AddComponent<TransformComponent>(
+				glm::vec2(-128, -1600),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			lw0.AddComponent<SpriteComponent>(
+				"metal-wall", 32, 32, 5
+			);
+			lw0.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32 * 3
+			);
+			lw0.AddTag(Obstacle);
+			Entity lw1 = Registry->CreateEntity();
+			lw1.AddComponent<TransformComponent>(
+				glm::vec2(-128, -1536),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			lw1.AddComponent<SpriteComponent>(
+				"metal-wall", 32, 32, 5
+			);
+			Entity lw2 = Registry->CreateEntity();
+			lw2.AddComponent<TransformComponent>(
+				glm::vec2(-128, -1472),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			lw2.AddComponent<SpriteComponent>(
+				"metal-wall", 32, 32, 5
+			);
+
+			//---//Password Manager//---//
+			Entity passwordManager = Registry->CreateEntity();
+			passwordManager.AddComponent<TransformComponent>(glm::vec2(
+				(Game::windowWidth - 100),
+				(Game::windowHeight - 100)
+			));
+			passwordManager.AddComponent<TextComponent>("Password: _ _ _", "pico-20", white, TopRight);
+			passwordManager.AddComponent<PasswordManagerComponent>();
+			passwordManager.AddTag(PasswordManager);
+
+			//---//Scientist2//---//
+			Entity sci2 = Registry->CreateEntity();
+			sci2.AddComponent<TransformComponent>(
+				glm::vec2(0, 2688),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			sci2.AddComponent<SpriteComponent>(
+				"scientist-2", 96, 32, 3
+			);
+			sci2.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			sci2.AddComponent<ScientistComponent>();
+			sci2.AddTag(Scientist);
 
 			//---//Ground//---//
 			//main room
