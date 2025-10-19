@@ -10,6 +10,7 @@ enum Tag {
 	Score,
 	Death,
 	PlayerInteractionCast,
+	Collectible,
 };
 
 enum Collider {
@@ -28,5 +29,5 @@ const int MIN_MS_PER_FRAME = 1000 / MAX_FPS;
 const int SCALE_FACTOR_32 = 2;
 const int SCALE_FACTOR_16 = 10;
 
-const int PLAYER_INTERACTION_WIDTH = 20;
+const int PLAYER_INTERACTION_WIDTH = 60;
 const int PLAYER_INTERACTION_HEIGHT = PLAYER_INTERACTION_WIDTH;

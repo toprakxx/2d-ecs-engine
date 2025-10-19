@@ -28,6 +28,8 @@
 #include "../Systems/PlayerAnimationSystem.hpp"
 #include "../Systems/ParentSystem.hpp"
 #include "../Systems/PlayerInteractionSystem.hpp"
+#include "../Systems/DoorSystem.hpp"
+#include "../Systems/CollectibleSystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -130,10 +132,12 @@ void Game::Run() {
 void Game::SetUp() {
 	//Adding textures
 	//asssetManager.AddTexture(renderer, "asset-name", "asset.png");
-	assetManager.AddTexture(renderer, "blue-man", "blue-man0.png");
-	assetManager.AddTexture(renderer, "metal-ground", "pretiles.png");
+	assetManager.AddTexture(renderer, "metal-ground", "inFloor.png");
 	assetManager.AddTexture(renderer, "time-bot", "TimeBotSpriteSheet4-4-4.png");
 	assetManager.AddTexture(renderer, "metal-wall", "sujam6wall.png");
+	assetManager.AddTexture(renderer, "garden-ground", "outFloor.png");
+	assetManager.AddTexture(renderer, "garden-wall", "outWalls.png");
+	assetManager.AddTexture(renderer, "misc", "miscStuff.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
@@ -159,6 +163,8 @@ void Game::SetUp() {
 	registry.AddSystem<PlayerAnimationSystem>();
 	registry.AddSystem<ParentSystem>();
 	registry.AddSystem<PlayerInteractionSystem>();
+	registry.AddSystem<DoorSystem>();
+	registry.AddSystem<CollectibleSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -166,6 +172,8 @@ void Game::SetUp() {
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<SoundEffectSystem>().SubscribeToEvents(eventBus, &assetManager);
 	registry.GetSystem<ObstacleCollisionSystem>().SubscribeToEvents(eventBus);
+	registry.GetSystem<DoorSystem>().SubscribeToEvents(eventBus, &inputManager);
+	registry.GetSystem<CollectibleSystem>().SubscribeToEvents(eventBus, &inputManager);
 }
 
 void Game::ProcessInput() {

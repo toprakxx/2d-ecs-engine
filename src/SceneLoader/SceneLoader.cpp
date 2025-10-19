@@ -11,6 +11,9 @@
 #include "../Components/AnimationComponent.h"
 #include "../Components/ParentComponent.h"
 #include "../Components/CameraFollowComponent.h"
+#include "../Components/PlayerInventoryComponent.h"
+#include "../Components/DoorComponent.h"
+#include "../Components/CollectibleComponent.h"
 #include "glm/fwd.hpp"
 
 auto &Registry = Registry::registry;
@@ -23,7 +26,20 @@ inline int PseudoRandomTileOffset(int x, int y, int range) {
     return int(h % range);
 }
 
+// Gap bit positions
 enum GapSide { TOP=0, RIGHT=1, BOTTOM=2, LEFT=3 };
+
+// Predefined gap sets
+constexpr std::bitset<4> GAPS_NONE                = std::bitset<4>(0b0000);
+constexpr std::bitset<4> GAPS_4WAY                = std::bitset<4>(0b1111);
+constexpr std::bitset<4> GAPS_BOTTOM_RIGHT        = std::bitset<4>( (1<<BOTTOM) | (1<<RIGHT) );
+constexpr std::bitset<4> GAPS_UP                  = std::bitset<4>( 1<<TOP );
+constexpr std::bitset<4> GAPS_UP_BOTTOM_RIGHT     = std::bitset<4>( (1<<TOP) | (1<<BOTTOM) | (1<<RIGHT) );
+constexpr std::bitset<4> GAPS_LEFT                = std::bitset<4>( 1<<LEFT );
+constexpr std::bitset<4> GAPS_LEFT_RIGHT       = std::bitset<4>((1<<LEFT) | (1<<RIGHT));
+constexpr std::bitset<4> GAPS_BOTTOM_UP       = std::bitset<4>( (1<<TOP) | (1<<BOTTOM) );
+constexpr std::bitset<4> GAPS_BOTTOM           = std::bitset<4>(1<<BOTTOM);
+constexpr std::bitset<4> GAPS_LEFT_RIGHT_BOTTOM = std::bitset<4>((1<<LEFT) | (1<<RIGHT) | (1<<BOTTOM));
 
 inline void CreateRoom(
     int wTiles, int hTiles,
@@ -108,6 +124,11 @@ void SceneLoader::LoadScene(Scenes level) {
 				PLAYER_INTERACTION_WIDTH,
 				PLAYER_INTERACTION_HEIGHT
 			);
+			playerInteractionCast.AddComponent<PlayerInventoryComponent>(
+				/*key*/ false,
+				/*card*/ false,
+				/*bomb*/ false
+			);
 			playerInteractionCast.AddTag(PlayerInteractionCast);
 
 			//---//Player//---//
@@ -131,7 +152,7 @@ void SceneLoader::LoadScene(Scenes level) {
 			player.AddComponent<RigidBodyComponent>(
 				glm::vec2(0,0)
 			);
-			player.AddComponent<PlayerControlComponent>(500.0);
+			player.AddComponent<PlayerControlComponent>(1000.0);
 			player.AddComponent<ColliderComponent>(
 				Box,
 				glm::vec2(0,0),
@@ -144,69 +165,188 @@ void SceneLoader::LoadScene(Scenes level) {
 			player.AddComponent<CameraFollowComponent>();
 			player.AddTag(Player);
 
-			//---//Wall//---//
-			// Entity wall = Registry->CreateEntity();
-			// wall.AddComponent<TransformComponent>(
-			// 	glm::vec2(Game::windowWidth/2 + 100, Game::windowHeight/2 + 100),
-			// 	glm::vec2(SCALE_FACTOR_32)
-			// );
-			// wall.AddComponent<SpriteComponent>("metal-ground", 32, 32, 5, false, 32*5, 0);
-			// wall.AddComponent<ColliderComponent>(
-			// 	Box,
-			// 	glm::vec2(0,0),
-			// 	32 * SCALE_FACTOR_32,
-			// 	32 * SCALE_FACTOR_32
-			// );
-			// wall.AddTag(Obstacle);
+			//---//Card Door//---//
+			Entity cardDoor = Registry->CreateEntity();
+			cardDoor.AddComponent<TransformComponent>(
+				glm::vec2(-384, 0),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			cardDoor.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 5, false, 224, 0
+			);
+			cardDoor.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			cardDoor.AddComponent<DoorComponent>(CardDoor);
+			cardDoor.AddTag(Obstacle);
+
+			//---//Card//---//
+			Entity card = Registry->CreateEntity();
+			card.AddComponent<TransformComponent>(
+				glm::vec2(256, -1088),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			card.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 5, false, 32, 0
+			);
+			card.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			card.AddComponent<CollectibleComponent>(Card);
+			card.AddTag(Collectible);
+			
+			Entity garbage1 = Registry->CreateEntity();
+			garbage1.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 3, false, 0, 0
+			);
+			garbage1.AddComponent<TransformComponent>(
+				glm::vec2(256, -1152),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			Entity garbage2 = Registry->CreateEntity();
+			garbage2.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 3, false, 0, 0
+			);
+			garbage2.AddComponent<TransformComponent>(
+				glm::vec2(192, -1152),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			Entity garbage3  = Registry->CreateEntity();
+			garbage3.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 3, false, 0, 0
+			);
+			garbage3.AddComponent<TransformComponent>(
+				glm::vec2(192, -1088),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+
+			//---//Key//---//
+			Entity key = Registry->CreateEntity();
+			key.AddComponent<TransformComponent>(
+				glm::vec2(1344, 1344),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			key.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 5, false, 64, 0
+			);
+			key.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			key.AddComponent<CollectibleComponent>(Key);
+			key.AddTag(Collectible);
+
+			//---//Bomb//---//
+			Entity bomb = Registry->CreateEntity();
+			bomb.AddComponent<TransformComponent>(
+				glm::vec2(-2884, -190),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			bomb.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 5, false, 96, 0
+			);
+			bomb.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			bomb.AddComponent<CollectibleComponent>(Bomb);
+			bomb.AddTag(Collectible);
+
+			//---//Key Door//---//
+			Entity keyDoor = Registry->CreateEntity();
+			keyDoor.AddComponent<TransformComponent>(
+				glm::vec2(384, 0),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			keyDoor.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 5, false, 192, 0
+			);
+			keyDoor.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			keyDoor.AddComponent<DoorComponent>(KeyDoor);
+			keyDoor.AddTag(Obstacle);
+
+			//---//Bomb Door//---//
+			constexpr int yVal = 64 * 27;
+			Entity bombDoor = Registry->CreateEntity();
+			bombDoor.AddComponent<TransformComponent>(
+				glm::vec2(0, yVal),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			bombDoor.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 5, false, 256, 0
+			);
+			bombDoor.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			bombDoor.AddComponent<DoorComponent>(BombDoor);
+			bombDoor.AddTag(Obstacle);
 
 			//---//Ground//---//
-			int xg = (int) Game::windowWidth / 2;
-			int yg = (int) Game::windowHeight / 2;
-
 			//main room
-			CreateRoom(11, 11, InTiles(-5, -5), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(11, 11, InTiles(-5, -5), "metal-ground", 15, true, "metal-wall", 1, GAPS_4WAY);
 			//up corridor
-			CreateRoom(5, 10, InTiles(-2, -15), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+			CreateRoom(5, 10, InTiles(-2, -15), "metal-ground", 15, true, "metal-wall", 0, GAPS_BOTTOM_UP, 3);
 			//down corriodr
-			CreateRoom(5, 10, InTiles(-2, 6), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+			CreateRoom(5, 10, InTiles(-2, 6), "metal-ground", 15, true, "metal-wall", 0, GAPS_BOTTOM_UP, 3);
 			//right corr
-			CreateRoom(10, 5, InTiles(6, -2), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("1010"), 3);
+			CreateRoom(10, 5, InTiles(6, -2), "metal-ground", 15, true, "metal-wall", 0, GAPS_LEFT_RIGHT, 1);
 			//left corr
-			CreateRoom(10, 5, InTiles(-15, -2), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("1010"), 3);
+			CreateRoom(10, 5, InTiles(-15, -2), "metal-ground", 15, true, "metal-wall", 0, GAPS_LEFT_RIGHT, 1);
+
+			//r1 room
+			CreateRoom(11, 11, InTiles(16, -5), "garden-ground", 4, true, "garden-wall", 3, GAPS_LEFT);
 
 			//u1 room
-			CreateRoom(11, 11, InTiles(-5, -26), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(11, 11, InTiles(-5, -26), "metal-ground", 15, true, "metal-wall", 1, GAPS_BOTTOM);
 
 			//d1 room
-			CreateRoom(11, 11, InTiles(-5, 16), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(11, 11, InTiles(-5, 16), "metal-ground", 15, true, "metal-wall", 1, GAPS_UP_BOTTOM_RIGHT);
 			//d1 down corr
-			CreateRoom(5, 10, InTiles(-2, 27), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+			CreateRoom(5, 10, InTiles(-2, 27), "metal-ground", 15, true, "metal-wall", 0, GAPS_BOTTOM_UP, 1);
 			//d1 right corr
-			CreateRoom(10, 5, InTiles(6, 19), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("1010"), 3);
+			CreateRoom(10, 5, InTiles(6, 19), "metal-ground", 15, true, "metal-wall", 0, GAPS_LEFT_RIGHT, 3);
 
 			//d1r1 room
-			CreateRoom(11, 11, InTiles(16, 16), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(11, 11, InTiles(16, 16), "metal-ground", 15, true, "metal-wall", 1, GAPS_LEFT);
 
 			//d2 room
-			CreateRoom(11, 11, InTiles(-5, 37), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(11, 11, InTiles(-5, 37), "metal-ground", 15, true, "metal-wall", 1, GAPS_UP);
 
 			//l1 room
-			CreateRoom(11, 11, InTiles(-26, -5), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(11, 11, InTiles(-26, -5), "metal-ground", 15, true, "metal-wall", 1, GAPS_LEFT_RIGHT_BOTTOM);
 			//l1 left corr
-			CreateRoom(10, 5, InTiles(-36, -2), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("1010"), 3);
+			CreateRoom(10, 5, InTiles(-36, -2), "metal-ground", 15, true, "metal-wall", 0, GAPS_LEFT_RIGHT, 3);
 			//l1 down corr
-			CreateRoom(5, 10, InTiles(-23, 6), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+			CreateRoom(5, 10, InTiles(-23, 6), "metal-ground", 15, true, "metal-wall", 0, GAPS_BOTTOM_UP, 3);
 
 			//l1d1 room
-			CreateRoom(11, 11, InTiles(-26, 16), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(11, 11, InTiles(-26, 16), "metal-ground", 15, true, "metal-wall", 1, GAPS_UP);
 
 			//l2 room
-			CreateRoom(11, 11, InTiles(-47, -5), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(11, 11, InTiles(-47, -5), "metal-ground", 15, true, "metal-wall", 1, GAPS_BOTTOM_RIGHT);
 			//l2 down corr
-			CreateRoom(5, 10, InTiles(-44, 6), "metal-ground", 5, true, "metal-wall", 0, std::bitset<4>("0101"), 3);
+			CreateRoom(5, 10, InTiles(-44, 6), "metal-ground", 15, true, "metal-wall", 0, GAPS_BOTTOM_UP, 3);
 
 			//l2d1 room
-			CreateRoom(11, 11, InTiles(-47, 16), "metal-ground", 5, true, "metal-wall", 1, std::bitset<4>("1111"));
+			CreateRoom(11, 11, InTiles(-47, 16), "metal-ground", 15, true, "metal-wall", 1, GAPS_UP);
 
 			break;
 		}
