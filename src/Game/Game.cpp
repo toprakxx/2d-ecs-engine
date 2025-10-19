@@ -149,6 +149,7 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "big-door", "bigDoor.png");
 	assetManager.AddTexture(renderer, "control-panel", "computer.png");
 	assetManager.AddTexture(renderer, "darkness", "bigsmoke.png");
+	assetManager.AddTexture(renderer, "bridge", "KOPRU.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
