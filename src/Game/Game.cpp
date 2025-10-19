@@ -35,6 +35,7 @@
 #include "../Systems/ControlPanelSystem.hpp"
 #include "../Systems/LeverSystem.hpp"
 #include "../Systems/TimerSystem.hpp"
+#include "../Systems/BridgeCrashSystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -160,6 +161,7 @@ void Game::SetUp() {
 	//Adding sound effects
 	//assetManager.AddSFX("sfx-name","sfx.wav");
 	assetManager.AddSFX("click-sound", "click.wav");
+	assetManager.AddSFX("bridge-crash", "metal-crash.wav");
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
@@ -186,6 +188,7 @@ void Game::SetUp() {
 	registry.AddSystem<ControlPanelSystem>();
 	registry.AddSystem<LeverSystem>();
 	registry.AddSystem<TimerSystem>();
+	registry.AddSystem<BridgeCrashSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -198,6 +201,7 @@ void Game::SetUp() {
 	registry.GetSystem<ScientistSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
 	registry.GetSystem<ControlPanelSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
 	registry.GetSystem<LeverSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
+	registry.GetSystem<BridgeCrashSystem>().SubscribeToEvents(eventBus, &registry);
 }
 
 void Game::ProcessInput() {
@@ -255,7 +259,7 @@ void Game::Update() {
 	registry.GetSystem<ParentSystem>().Update();
 	registry.GetSystem<PlayerInteractionSystem>().Update();
 	registry.GetSystem<PassworManagerSystem>().Update();
-	registry.GetSystem<TimerSystem>().Update(deltaTime, &sceneLoader);
+	registry.GetSystem<TimerSystem>().Update(deltaTime, &sceneLoader, &eventBus);
 
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;

@@ -391,7 +391,7 @@ void SceneLoader::LoadScene(Scenes level) {
 				(50)
 			));
 			timer.AddComponent<TextComponent>("00:00", "pico-40", white, TopLeft);
-			timer.AddComponent<TimerComponent>(300);
+			timer.AddComponent<TimerComponent>(30);
 
 			//---//Scientist1//---//
 			Entity sci1 = Registry->CreateEntity();
@@ -545,6 +545,11 @@ void SceneLoader::LoadScene(Scenes level) {
 			bridge.AddComponent<SpriteComponent>(
 				"bridge", 96, 96, 3
 			);
+			bridge.AddComponent<AnimationComponent>(AnimationComponent{
+				{"good", 0, 1, false},
+				{"crashed", 1, 2, false}
+			});
+			bridge.AddTag(Bridge);
 
 			//---//Ground//---//
 			//main room

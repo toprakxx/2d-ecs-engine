@@ -27,11 +27,12 @@ public:
 				//If we are in the last frame of the animation
 				if(animation.currentFrame == animation.frameCount-1 && !animation.isLooping) {
 					eventBus.EmitEvent<AnimationDoneEvent>(entity, animation.name);
+				} else {
+					sprite.srcRect.y = sprite.height * animation.sheetIndex;
+					animation.currentFrame = (animation.currentFrame + 1 ) % animation.frameCount;
+					sprite.srcRect.x = sprite.width * animation.currentFrame;
+					animation.frameTimer = animation.secondsPerAnimationFrame;
 				}
-				sprite.srcRect.y = sprite.height * animation.sheetIndex;
-				animation.currentFrame = (animation.currentFrame + 1 ) % animation.frameCount;
-				sprite.srcRect.x = sprite.width * animation.currentFrame;
-				animation.frameTimer = animation.secondsPerAnimationFrame;
 			}
 		}
 	}
