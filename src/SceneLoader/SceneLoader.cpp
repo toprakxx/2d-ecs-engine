@@ -18,6 +18,8 @@
 #include "../Components/PasswordManagerComponent.h"
 #include "../Components/ScientistComponent.h"
 #include "glm/fwd.hpp"
+#include <bit>
+#include <iterator>
 
 auto &Registry = Registry::registry;
 //////////////////////////////////////////////////
@@ -431,6 +433,23 @@ void SceneLoader::LoadScene(Scenes level) {
 			);
 			sci3.AddComponent<ScientistComponent>();
 			sci3.AddTag(Scientist);
+
+			//---//Big Door//---//
+			Entity bigDoor = Registry->CreateEntity();
+			bigDoor.AddComponent<TransformComponent>(
+				glm::vec2(-64, -1472),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			bigDoor.AddComponent<SpriteComponent>(
+				"big-door", 96, 32, 3
+			);
+			bigDoor.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32 * 3,
+				32 * SCALE_FACTOR_32
+			);
+			bigDoor.AddTag(Obstacle);
 
 			//---//Ground//---//
 			//main room

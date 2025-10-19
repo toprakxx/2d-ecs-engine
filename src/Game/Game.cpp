@@ -143,6 +143,7 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "scientist-1", "deadsci1.png");
 	assetManager.AddTexture(renderer, "scientist-2", "deadsci2.png");
 	assetManager.AddTexture(renderer, "scientist-3", "deadsci3.png");
+	assetManager.AddTexture(renderer, "big-door", "bigDoor.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
