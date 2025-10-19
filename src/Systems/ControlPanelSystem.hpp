@@ -44,8 +44,6 @@ public:
 				auto entities = registry->u_GetEntitiesWithTag(Obstacle);
 				for (auto &e : *entities) {
 					if (e.HasComponent<BigDoorComponent>()) {
-						std::cout << "test" << std::endl;
-						// e.RemoveComponent<ColliderComponent>();
 						e.Kill();
 						return;
 					}

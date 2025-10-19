@@ -146,6 +146,7 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "scientist-3", "deadsci3.png");
 	assetManager.AddTexture(renderer, "big-door", "bigDoor.png");
 	assetManager.AddTexture(renderer, "control-panel", "computer.png");
+	assetManager.AddTexture(renderer, "darkness", "bigsmoke.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);

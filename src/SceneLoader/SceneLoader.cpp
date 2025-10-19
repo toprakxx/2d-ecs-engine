@@ -10,6 +10,7 @@
 #include "../Components/ColliderComponent.h"
 #include "../Components/AnimationComponent.h"
 #include "../Components/ParentComponent.h"
+#include "../Components/DarknessComponent.h"
 #include "../Components/CameraFollowComponent.h"
 #include "../Components/PlayerInventoryComponent.h"
 #include "../Components/DoorComponent.h"
@@ -477,6 +478,24 @@ void SceneLoader::LoadScene(Scenes level) {
 			);
 			panel.AddComponent<ControlPanelComponent>();
 			panel.AddTag(Obstacle);
+
+			//---//Darkness//---//
+			Entity dark = Registry->CreateEntity();
+			dark.AddComponent<TransformComponent>(
+				glm::vec2(-256, 1088),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			dark.AddComponent<SpriteComponent>(
+				"darkness", 288, 288, 10
+			);
+			dark.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32 * 6,
+				32 * SCALE_FACTOR_32
+			);
+			dark.AddComponent<DarknessComponent>();
+			dark.AddTag(Obstacle);
 
 			//---//Ground//---//
 			//main room
