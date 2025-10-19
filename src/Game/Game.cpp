@@ -34,6 +34,7 @@
 #include "../Systems/ScientistSystem.hpp"
 #include "../Systems/ControlPanelSystem.hpp"
 #include "../Systems/LeverSystem.hpp"
+#include "../Systems/TimerSystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -152,9 +153,12 @@ void Game::SetUp() {
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
 	assetManager.AddFont("pico-20", "pico8.ttf", 20);
+	assetManager.AddFont("pico-40", "pico8.ttf", 40);
+	assetManager.AddFont("pico-60", "pico8.ttf", 60);
 
 	//Adding sound effects
 	//assetManager.AddSFX("sfx-name","sfx.wav");
+	assetManager.AddSFX("click-sound", "click.wav");
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
@@ -180,6 +184,7 @@ void Game::SetUp() {
 	registry.AddSystem<ScientistSystem>();
 	registry.AddSystem<ControlPanelSystem>();
 	registry.AddSystem<LeverSystem>();
+	registry.AddSystem<TimerSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -249,6 +254,7 @@ void Game::Update() {
 	registry.GetSystem<ParentSystem>().Update();
 	registry.GetSystem<PlayerInteractionSystem>().Update();
 	registry.GetSystem<PassworManagerSystem>().Update();
+	registry.GetSystem<TimerSystem>().Update(deltaTime, &sceneLoader);
 
 	//Time passed between last and this frame. (Converted from ms to seconds)
 	deltaTime = (SDL_GetTicks64() - msPassedUntilLastFrame) / 1000.0f;

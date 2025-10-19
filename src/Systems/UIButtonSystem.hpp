@@ -31,7 +31,7 @@ public:
 			button.mouseHover = mouseHover;
 
 			if(mouseHover and input.isMousePressed(MOUSE_L)) {
-				eventBus.EmitEvent<SoundEffectEvent>("click-sound");
+				// eventBus.EmitEvent<SoundEffectEvent>("click-sound");
 				if(button.callback) button.callback();
 				eventBus.EmitEvent<ButtonClickedEvent>(e);
 			}

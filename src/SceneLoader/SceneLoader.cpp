@@ -20,9 +20,12 @@
 #include "../Components/ScientistComponent.h"
 #include "../Components/BigDoorComponent.h"
 #include "../Components/ControlPanelComponent.h"
+#include "../Components/TimerComponent.h"
+#include "../Components/UIButtonComponent.h"
 #include "glm/fwd.hpp"
 
 auto &Registry = Registry::registry;
+
 //////////////////////////////////////////////////
 /// Helper Functions
 //////////////////////////////////////////////////
@@ -381,6 +384,15 @@ void SceneLoader::LoadScene(Scenes level) {
 			passwordManager.AddComponent<PasswordManagerComponent>();
 			passwordManager.AddTag(PasswordManager);
 
+			//---//Timer//---//
+			Entity timer = Registry->CreateEntity();
+			timer.AddComponent<TransformComponent>(glm::vec2(
+				(50),
+				(50)
+			));
+			timer.AddComponent<TextComponent>("00:00", "pico-40", white, TopLeft);
+			timer.AddComponent<TimerComponent>(30);
+
 			//---//Scientist1//---//
 			Entity sci1 = Registry->CreateEntity();
 			sci1.AddComponent<TransformComponent>(
@@ -580,6 +592,35 @@ void SceneLoader::LoadScene(Scenes level) {
 			break;
 		}
 	case DeathScreen: {
+			SDL_Color white = {255, 255, 255};
+			SDL_Color red = {255, 0, 0};
+			int midX = Game::windowWidth/2.0;
+
+			// "You Died" text
+			Entity deathText = Registry->CreateEntity();
+			deathText.AddComponent<TransformComponent>(glm::vec2(midX, 350));
+			deathText.AddComponent<TextComponent>("Search simulation failed...", "pico-60", white, TopCenter);
+
+			// Restart button
+			Entity restart = Registry->CreateEntity();
+			restart.AddComponent<TransformComponent>(glm::vec2(midX, 500));
+			restart.AddComponent<TextComponent>("Restart", "pico-40", white, TopCenter);
+			restart.AddComponent<UIButtonComponent>(300, 50, [this]() {
+				UnloadCurrentScene();
+				LoadScene(StartMenu);   // restart game
+			}, glm::vec2(-150, -40));
+			restart.AddComponent<CameraFollowComponent>();
+
+			// Quit button
+			Entity quit = Registry->CreateEntity();
+			quit.AddComponent<TransformComponent>(glm::vec2(midX, 600));
+			quit.AddComponent<TextComponent>("Quit", "pico-40", white, TopCenter);
+			quit.AddComponent<UIButtonComponent>(200, 50, []() {
+				SDL_Event e;
+				e.type = SDL_QUIT;
+				SDL_PushEvent(&e);
+			}, glm::vec2(-112, -40));
+
 
 			break;
 		}
