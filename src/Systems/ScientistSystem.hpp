@@ -5,6 +5,7 @@
 #include "../Components/PasswordManagerComponent.h"
 #include "../Components/ScientistComponent.h"
 #include "../EventSystem/Events/CollisionEvent.h"
+#include "../EventSystem/Events/SoundEffectEvent.h"
 
 class ScientistSystem : public System {
 public:
@@ -12,6 +13,7 @@ public:
 		eventBust.SubscribeToEvent(this, &ScientistSystem::OnPlayerCast);
 		input = _input;
 		registry = _registry;
+		eb = &eventBust;
 	}
 
 	void OnPlayerCast(CollisionEvent &e){
@@ -27,6 +29,7 @@ public:
 			auto entities = registry->u_GetEntitiesWithTag(PasswordManager);
 			for (auto &e : *entities) {
 				e.GetComponent<PasswordManagerComponent>().numKnownDigits++;
+				eb->EmitEvent<SoundEffectEvent>("password-sfx");
 				sciComp.beenRead = true;
 			}
 		}
@@ -34,4 +37,5 @@ public:
 
 	InputManager *input = nullptr;
 	Registry *registry = nullptr;
+	EventBus *eb = nullptr;
 };

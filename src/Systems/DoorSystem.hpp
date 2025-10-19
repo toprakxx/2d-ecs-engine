@@ -4,13 +4,17 @@
 #include "../InputManager/InputManager.h"
 #include "../Components/DoorComponent.h"
 #include "../Components/PlayerInventoryComponent.h"
+#include "../Components/AnimationComponent.h"
 #include "../EventSystem/Events/CollisionEvent.h"
+#include "../EventSystem/Events/SoundEffectEvent.h"
+#include "AnimationSystem.hpp"
 
 class DoorSystem : public System {
 public:
 	void SubscribeToEvents(EventBus &eventBus, InputManager *_input) {
 		eventBus.SubscribeToEvent<DoorSystem, CollisionEvent>(this, &DoorSystem::OnPlayerCast);
 		input = _input;
+		eb = &eventBus;
 	}
 
 	void OnPlayerCast(CollisionEvent &e) {
@@ -35,11 +39,16 @@ public:
 				if(inventory.hasKey) door.Kill();
 				break;
 			case BombDoor:
-				if(inventory.hasBomb) door.Kill();
+				if(inventory.hasBomb) {
+						door.Kill();
+						eb->EmitEvent<SoundEffectEvent>("explosion");
+						// ChangeAnimation(door, "boom");
+					}
 				break;
 			}
 		}
 	}
 
 	InputManager* input = nullptr;
+	EventBus *eb = nullptr;
 };

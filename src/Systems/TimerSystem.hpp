@@ -30,7 +30,7 @@ public:
 			ss << std::fixed << std::setprecision(1) << timeC->currentSeconds;
 			textC->text = ss.str();
 
-			if((timeC->currentSeconds <= 2 * timeC->maxSeconds / 3.0) and !timeC->bridgeCollapsed) {
+			if((timeC->currentSeconds <= timeC->maxSeconds / 2.0) and !timeC->bridgeCollapsed) {
 				eventBus->EmitEvent<TimerBridgeEvent>();
 				eventBus->EmitEvent<SoundEffectEvent>("bridge-crash");
 				timeC->bridgeCollapsed = true;

@@ -154,6 +154,8 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "bridge", "KOPRU.png");
 	assetManager.AddTexture(renderer, "battery", "batarya.png");
 	assetManager.AddTexture(renderer, "fan", "BATTALFAN.png");
+	assetManager.AddTexture(renderer, "decor", "roominsides.png");
+	assetManager.AddTexture(renderer, "bomba", "rockboomin.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
@@ -165,6 +167,8 @@ void Game::SetUp() {
 	//assetManager.AddSFX("sfx-name","sfx.wav");
 	assetManager.AddSFX("click-sound", "click.wav");
 	assetManager.AddSFX("bridge-crash", "metal-crash.wav");
+	assetManager.AddSFX("password-sfx", "pickupCoin.wav");
+	assetManager.AddSFX("explosion", "explosion.wav");
 
 	registry.AddSystem<RenderSystem>();
 	registry.AddSystem<MovementSystem>();
@@ -194,7 +198,7 @@ void Game::SetUp() {
 	registry.AddSystem<BridgeCrashSystem>();
 	registry.AddSystem<BatterySystem>();
 
-	sceneLoader.LoadScene(Scenes::StartMenu);
+	sceneLoader.LoadScene(Scenes::Gameplay);
 
 	//Systems that subscribe to events do so here
 	registry.GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
@@ -225,7 +229,7 @@ void Game::ProcessInput() {
 				isGameRunning = false;
 				// registry.ClearEntities();
 			}
-			if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
+			// if (sdlEvent.key.keysym.sym == SDLK_F1) inDebugMode = !inDebugMode;
 			inputManager.KeyPressed(sdlEvent.key.keysym.scancode);
 			break;
 		case SDL_KEYUP:

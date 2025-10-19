@@ -162,7 +162,7 @@ void SceneLoader::LoadScene(Scenes level) {
 			player.AddComponent<RigidBodyComponent>(
 				glm::vec2(0,0)
 			);
-			player.AddComponent<PlayerControlComponent>(1000.0);
+			player.AddComponent<PlayerControlComponent>(500.0);
 			player.AddComponent<ColliderComponent>(
 				Box,
 				glm::vec2(0,0),
@@ -298,8 +298,13 @@ void SceneLoader::LoadScene(Scenes level) {
 				glm::vec2(SCALE_FACTOR_32)
 			);
 			bombDoor.AddComponent<SpriteComponent>(
-				"misc", 32, 32, 5, false, 256, 0
+				"bomba", 32, 32, 5
 			);
+			bombDoor.AddComponent<AnimationComponent>(AnimationComponent{
+				{"chill", 0, 1, true, 6},
+				{"boom", 1, 21, false, 6},
+				{"dead", 2, 1, false, 6}
+			});
 			bombDoor.AddComponent<ColliderComponent>(
 				Box,
 				glm::vec2(0,0),
@@ -380,7 +385,7 @@ void SceneLoader::LoadScene(Scenes level) {
 				(Game::windowWidth - 100),
 				(Game::windowHeight - 100)
 			));
-			passwordManager.AddComponent<TextComponent>("Password: _ _ _", "pico-20", white, TopRight);
+			passwordManager.AddComponent<TextComponent>("Password: _ _ _", "pico-40", white, TopRight);
 			passwordManager.AddComponent<PasswordManagerComponent>();
 			passwordManager.AddTag(PasswordManager);
 
@@ -391,7 +396,7 @@ void SceneLoader::LoadScene(Scenes level) {
 				(50)
 			));
 			timer.AddComponent<TextComponent>("00:00", "pico-40", white, TopLeft);
-			timer.AddComponent<TimerComponent>(300);
+			timer.AddComponent<TimerComponent>(80);
 
 			//---//Scientist1//---//
 			Entity sci1 = Registry->CreateEntity();
@@ -591,6 +596,14 @@ void SceneLoader::LoadScene(Scenes level) {
 
 			//r1 room
 			CreateRoom(11, 11, InTiles(16, -5), "garden-ground", 4, true, "garden-wall", 3, GAPS_LEFT);
+			Entity flowers = Registry->CreateEntity();
+			flowers.AddComponent<TransformComponent>(
+				glm::vec2(1088, -256),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			flowers.AddComponent<SpriteComponent>(
+				"decor", 288, 288, 1, false, 8 * 288, 0
+			);
 
 			//u1 room
 			CreateRoom(11, 11, InTiles(-5, -26), "metal-ground", 15, true, "metal-wall", 1, GAPS_BOTTOM);
@@ -614,6 +627,15 @@ void SceneLoader::LoadScene(Scenes level) {
 			CreateRoom(10, 5, InTiles(-36, -2), "metal-ground", 15, true, "metal-wall", 0, GAPS_LEFT_RIGHT, 3);
 			//l1 down corr
 			CreateRoom(5, 10, InTiles(-23, 6), "metal-ground", 15, true, "metal-wall", 0, GAPS_BOTTOM_UP, 3);
+			Entity l1room = Registry->CreateEntity();
+			l1room.AddComponent<TransformComponent>(
+				glm::vec2(-1600, -256),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			l1room.AddComponent<SpriteComponent>(
+				"decor", 288, 288, 1, false, 2 * 288, 0
+			);
+
 
 			//l1d1 room
 			CreateRoom(11, 11, InTiles(-26, 16), "metal-ground", 15, true, "metal-wall", 1, GAPS_UP);
@@ -629,6 +651,60 @@ void SceneLoader::LoadScene(Scenes level) {
 			break;
 		}
 	case Gameplay:{
+			SDL_Color white = {255, 255, 255};
+			SDL_Color red = {255, 0, 0};
+			int midX = Game::windowWidth/2.0;
+
+			Entity deathText = Registry->CreateEntity();
+			deathText.AddComponent<TransformComponent>(glm::vec2(midX, 350));
+			deathText.AddComponent<TextComponent>("Batteries Not Included", "pico-60", white, TopCenter);
+
+			// start button
+			Entity restart = Registry->CreateEntity();
+			restart.AddComponent<TransformComponent>(glm::vec2(midX, 500));
+			restart.AddComponent<TextComponent>("Start", "pico-40", white, TopCenter);
+			restart.AddComponent<UIButtonComponent>(300, 50, [this]() {
+				UnloadCurrentScene();
+				LoadScene(StartMenu);
+			}, glm::vec2(-150, -40));
+			restart.AddComponent<CameraFollowComponent>();
+
+			// Quit button
+			Entity quit = Registry->CreateEntity();
+			quit.AddComponent<TransformComponent>(glm::vec2(midX, 600));
+			quit.AddComponent<TextComponent>("Quit", "pico-40", white, TopCenter);
+			quit.AddComponent<UIButtonComponent>(200, 50, []() {
+				SDL_Event e;
+				e.type = SDL_QUIT;
+				SDL_PushEvent(&e);
+			}, glm::vec2(-112, -40));
+
+			Entity tut1 = Registry->CreateEntity();
+			tut1.AddComponent<TransformComponent>(glm::vec2(
+				(Game::windowWidth - 200),
+				(Game::windowHeight - 150)
+			));
+			tut1.AddComponent<TextComponent>("WASD : Walk", "pico-20", white, TopCenter);
+			tut1.AddComponent<PasswordManagerComponent>();
+			tut1.AddTag(PasswordManager);
+
+			Entity tut2 = Registry->CreateEntity();
+			tut2.AddComponent<TransformComponent>(glm::vec2(
+				(Game::windowWidth - 200),
+				(Game::windowHeight - 100)
+			));
+			tut2.AddComponent<TextComponent>("E : Interact", "pico-20", white, TopCenter);
+			tut2.AddComponent<PasswordManagerComponent>();
+			tut2.AddTag(PasswordManager);
+			
+			Entity tui = Registry->CreateEntity();
+			tui.AddComponent<TransformComponent>(glm::vec2(
+				(50),
+				(Game::windowHeight - 100)
+			));
+			tui.AddComponent<TextComponent>("Find you batteries, before you die!", "pico-20", white, TopLeft);
+			tui.AddComponent<PasswordManagerComponent>();
+			tui.AddTag(PasswordManager);
 
 			break;
 		}
