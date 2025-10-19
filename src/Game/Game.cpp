@@ -36,6 +36,7 @@
 #include "../Systems/LeverSystem.hpp"
 #include "../Systems/TimerSystem.hpp"
 #include "../Systems/BridgeCrashSystem.hpp"
+#include "../Systems/BatterySystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -149,8 +150,10 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "scientist-3", "deadsci3.png");
 	assetManager.AddTexture(renderer, "big-door", "bigDoor.png");
 	assetManager.AddTexture(renderer, "control-panel", "computer.png");
-	assetManager.AddTexture(renderer, "darkness", "darksideoftheroom.png");
+	assetManager.AddTexture(renderer, "darkness", "smokedroom.png");
 	assetManager.AddTexture(renderer, "bridge", "KOPRU.png");
+	assetManager.AddTexture(renderer, "battery", "batarya.png");
+	assetManager.AddTexture(renderer, "fan", "BATTALFAN.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);
@@ -189,6 +192,7 @@ void Game::SetUp() {
 	registry.AddSystem<LeverSystem>();
 	registry.AddSystem<TimerSystem>();
 	registry.AddSystem<BridgeCrashSystem>();
+	registry.AddSystem<BatterySystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -202,6 +206,7 @@ void Game::SetUp() {
 	registry.GetSystem<ControlPanelSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
 	registry.GetSystem<LeverSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
 	registry.GetSystem<BridgeCrashSystem>().SubscribeToEvents(eventBus, &registry);
+	registry.GetSystem<BatterySystem>().SubscribeToEvents(eventBus, &sceneLoader);
 }
 
 void Game::ProcessInput() {

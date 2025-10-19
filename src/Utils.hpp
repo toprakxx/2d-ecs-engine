@@ -14,7 +14,8 @@ enum Tag {
 	Scientist,
 	PasswordManager,
 	Lever,
-	Bridge
+	Bridge,
+	Battery
 };
 
 enum Collider {

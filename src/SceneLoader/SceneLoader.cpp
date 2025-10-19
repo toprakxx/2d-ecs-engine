@@ -391,7 +391,7 @@ void SceneLoader::LoadScene(Scenes level) {
 				(50)
 			));
 			timer.AddComponent<TextComponent>("00:00", "pico-40", white, TopLeft);
-			timer.AddComponent<TimerComponent>(30);
+			timer.AddComponent<TimerComponent>(300);
 
 			//---//Scientist1//---//
 			Entity sci1 = Registry->CreateEntity();
@@ -470,7 +470,7 @@ void SceneLoader::LoadScene(Scenes level) {
 				glm::vec2(SCALE_FACTOR_32)
 			);
 			smallDoor.AddComponent<SpriteComponent>(
-				"big-door", 96, 32, 3, false, 0, 32
+				"big-door", 96, 32, 2, false, 0, 32
 			);
 
 			//---//Control Panel//---//
@@ -500,6 +500,9 @@ void SceneLoader::LoadScene(Scenes level) {
 			dark.AddComponent<SpriteComponent>(
 				"darkness", 288, 288, 10
 			);
+			dark.AddComponent<AnimationComponent>(AnimationComponent{
+				{"smoke", 0, 10, true, 6}
+			});
 			dark.AddComponent<ColliderComponent>(
 				Box,
 				glm::vec2(0,0),
@@ -526,15 +529,18 @@ void SceneLoader::LoadScene(Scenes level) {
 			);
 			lever.AddTag(Lever);
 
-			//---//Lamp//---//
-			Entity lamp = Registry->CreateEntity();
-			lamp.AddComponent<TransformComponent>(
+			//---//Fan//---//
+			Entity fan = Registry->CreateEntity();
+			fan.AddComponent<TransformComponent>(
 				glm::vec2(-256, 1344),
 				glm::vec2(SCALE_FACTOR_32)
 			);
-			lamp.AddComponent<SpriteComponent>(
-				"misc", 32, 32, 3, false, 288
+			fan.AddComponent<SpriteComponent>(
+				"fan", 32, 32, 3
 			);
+			fan.AddComponent<AnimationComponent>(AnimationComponent{
+				{"spin", 0, 6, true, 6}
+			});
 
 			//---//Bridge//---//
 			Entity bridge = Registry->CreateEntity();
@@ -550,6 +556,26 @@ void SceneLoader::LoadScene(Scenes level) {
 				{"crashed", 1, 2, false}
 			});
 			bridge.AddTag(Bridge);
+
+			//---//Battery//---//
+			Entity battery = Registry->CreateEntity();
+			battery.AddComponent<TransformComponent>(
+				glm::vec2(0, -1600),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			battery.AddComponent<SpriteComponent>(
+				"battery", 32, 32, 3
+			);
+			battery.AddComponent<AnimationComponent>(AnimationComponent{
+				{"batarya", 0, 4, true, 6}
+			}),
+			battery.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			battery.AddTag(Battery);
 
 			//---//Ground//---//
 			//main room
@@ -624,6 +650,40 @@ void SceneLoader::LoadScene(Scenes level) {
 				UnloadCurrentScene();
 				LoadScene(StartMenu);   // restart game
 			}, glm::vec2(-150, -40));
+			restart.AddComponent<CameraFollowComponent>();
+
+			// Quit button
+			Entity quit = Registry->CreateEntity();
+			quit.AddComponent<TransformComponent>(glm::vec2(midX, 600));
+			quit.AddComponent<TextComponent>("Quit", "pico-40", white, TopCenter);
+			quit.AddComponent<UIButtonComponent>(200, 50, []() {
+				SDL_Event e;
+				e.type = SDL_QUIT;
+				SDL_PushEvent(&e);
+			}, glm::vec2(-112, -40));
+
+
+			break;
+		}
+
+	case WinScene: {
+			SDL_Color white = {255, 255, 255};
+			SDL_Color red = {255, 0, 0};
+			int midX = Game::windowWidth/2.0;
+
+			// "You Died" text
+			Entity deathText = Registry->CreateEntity();
+			deathText.AddComponent<TransformComponent>(glm::vec2(midX, 350));
+			deathText.AddComponent<TextComponent>("Yes, that should work...", "pico-60", white, TopCenter);
+
+			// Restart button
+			Entity restart = Registry->CreateEntity();
+			restart.AddComponent<TransformComponent>(glm::vec2(midX, 500));
+			// restart.AddComponent<TextComponent>("Re-calculate", "pico-40", white, TopCenter);
+			// restart.AddComponent<UIButtonComponent>(300, 50, [this]() {
+			// 	UnloadCurrentScene();
+			// 	LoadScene(StartMenu);   // restart game
+			// }, glm::vec2(-150, -40));
 			restart.AddComponent<CameraFollowComponent>();
 
 			// Quit button
