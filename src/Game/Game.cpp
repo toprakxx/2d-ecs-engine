@@ -143,13 +143,13 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "metal-wall", "sujam6wall.png");
 	assetManager.AddTexture(renderer, "garden-ground", "outFloor.png");
 	assetManager.AddTexture(renderer, "garden-wall", "outWalls.png");
-	assetManager.AddTexture(renderer, "misc", "miscStuff.png");
+	assetManager.AddTexture(renderer, "misc", "miscStuff3.png");
 	assetManager.AddTexture(renderer, "scientist-1", "deadsci1.png");
 	assetManager.AddTexture(renderer, "scientist-2", "deadsci2.png");
 	assetManager.AddTexture(renderer, "scientist-3", "deadsci3.png");
 	assetManager.AddTexture(renderer, "big-door", "bigDoor.png");
 	assetManager.AddTexture(renderer, "control-panel", "computer.png");
-	assetManager.AddTexture(renderer, "darkness", "bigsmoke.png");
+	assetManager.AddTexture(renderer, "darkness", "darksideoftheroom.png");
 	assetManager.AddTexture(renderer, "bridge", "KOPRU.png");
 
 	//Adding fonts
@@ -268,7 +268,8 @@ void Game::Update() {
 
 void Game::Render() {
 	// SDL_Color background = {135, 206, 235, SDL_ALPHA_OPAQUE};
-	SDL_Color background = {0, 0, 0, SDL_ALPHA_OPAQUE};
+	// SDL_Color background = {0, 0, 0, SDL_ALPHA_OPAQUE};
+	SDL_Color background = {62, 49, 43, SDL_ALPHA_OPAQUE};
 	SDL_SetRenderDrawColor(renderer, background.r, background.g, background.b , background.a);
 	SDL_RenderClear(renderer);
 

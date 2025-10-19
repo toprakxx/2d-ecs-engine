@@ -619,7 +619,7 @@ void SceneLoader::LoadScene(Scenes level) {
 			// Restart button
 			Entity restart = Registry->CreateEntity();
 			restart.AddComponent<TransformComponent>(glm::vec2(midX, 500));
-			restart.AddComponent<TextComponent>("Restart", "pico-40", white, TopCenter);
+			restart.AddComponent<TextComponent>("Re-calculate", "pico-40", white, TopCenter);
 			restart.AddComponent<UIButtonComponent>(300, 50, [this]() {
 				UnloadCurrentScene();
 				LoadScene(StartMenu);   // restart game
