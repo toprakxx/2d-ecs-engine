@@ -13,6 +13,7 @@ enum Tag {
 	Collectible,
 	Scientist,
 	PasswordManager,
+	Lever
 };
 
 enum Collider {

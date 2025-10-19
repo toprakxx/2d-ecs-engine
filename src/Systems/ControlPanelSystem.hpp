@@ -10,8 +10,6 @@
 #include "../Components/BigDoorComponent.h"
 #include "../Components/ControlPanelComponent.h"
 #include "../EventSystem/Events/CollisionEvent.h"
-#include <iostream>
-#include <ostream>
 
 class ControlPanelSystem : public System {
 public:

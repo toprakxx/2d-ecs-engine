@@ -496,6 +496,33 @@ void SceneLoader::LoadScene(Scenes level) {
 			);
 			dark.AddComponent<DarknessComponent>();
 			dark.AddTag(Obstacle);
+			
+			//---//Lever//---//
+			Entity lever = Registry->CreateEntity();
+			lever.AddComponent<TransformComponent>(
+				glm::vec2(-1088, 1344),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			lever.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 3, false, 128
+			);
+			lever.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			lever.AddTag(Lever);
+
+			//---//Lamp//---//
+			Entity lamp = Registry->CreateEntity();
+			lamp.AddComponent<TransformComponent>(
+				glm::vec2(-256, 1344),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			lamp.AddComponent<SpriteComponent>(
+				"misc", 32, 32, 3, false, 288
+			);
 
 			//---//Ground//---//
 			//main room

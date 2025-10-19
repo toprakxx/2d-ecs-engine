@@ -33,6 +33,7 @@
 #include "../Systems/PasswordManagerSystem.hpp"
 #include "../Systems/ScientistSystem.hpp"
 #include "../Systems/ControlPanelSystem.hpp"
+#include "../Systems/LeverSystem.hpp"
 #include "SDL_events.h"
 
 int Game::windowHeight;
@@ -178,6 +179,7 @@ void Game::SetUp() {
 	registry.AddSystem<PassworManagerSystem>();
 	registry.AddSystem<ScientistSystem>();
 	registry.AddSystem<ControlPanelSystem>();
+	registry.AddSystem<LeverSystem>();
 
 	sceneLoader.LoadScene(Scenes::StartMenu);
 
@@ -189,6 +191,7 @@ void Game::SetUp() {
 	registry.GetSystem<CollectibleSystem>().SubscribeToEvents(eventBus, &inputManager);
 	registry.GetSystem<ScientistSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
 	registry.GetSystem<ControlPanelSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
+	registry.GetSystem<LeverSystem>().SubscribeToEvents(eventBus, &inputManager, &registry);
 }
 
 void Game::ProcessInput() {
