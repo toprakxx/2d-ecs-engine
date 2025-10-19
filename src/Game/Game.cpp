@@ -140,7 +140,9 @@ void Game::SetUp() {
 	assetManager.AddTexture(renderer, "garden-ground", "outFloor.png");
 	assetManager.AddTexture(renderer, "garden-wall", "outWalls.png");
 	assetManager.AddTexture(renderer, "misc", "miscStuff.png");
+	assetManager.AddTexture(renderer, "scientist-1", "deadsci1.png");
 	assetManager.AddTexture(renderer, "scientist-2", "deadsci2.png");
+	assetManager.AddTexture(renderer, "scientist-3", "deadsci3.png");
 
 	//Adding fonts
 	//assetManager.AddFont("font-name", "font.ttf", font-size);

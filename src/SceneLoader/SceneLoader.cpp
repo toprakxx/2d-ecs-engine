@@ -378,6 +378,24 @@ void SceneLoader::LoadScene(Scenes level) {
 			passwordManager.AddComponent<PasswordManagerComponent>();
 			passwordManager.AddTag(PasswordManager);
 
+			//---//Scientist1//---//
+			Entity sci1 = Registry->CreateEntity();
+			sci1.AddComponent<TransformComponent>(
+				glm::vec2(1472, 0),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			sci1.AddComponent<SpriteComponent>(
+				"scientist-1", 96, 32, 3
+			);
+			sci1.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(0,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			sci1.AddComponent<ScientistComponent>();
+			sci1.AddTag(Scientist);
+
 			//---//Scientist2//---//
 			Entity sci2 = Registry->CreateEntity();
 			sci2.AddComponent<TransformComponent>(
@@ -395,6 +413,24 @@ void SceneLoader::LoadScene(Scenes level) {
 			);
 			sci2.AddComponent<ScientistComponent>();
 			sci2.AddTag(Scientist);
+
+			//---//Scientist3//---//
+			Entity sci3 = Registry->CreateEntity();
+			sci3.AddComponent<TransformComponent>(
+				glm::vec2(-2944, 1600),
+				glm::vec2(SCALE_FACTOR_32)
+			);
+			sci3.AddComponent<SpriteComponent>(
+				"scientist-3", 96, 32, 3
+			);
+			sci3.AddComponent<ColliderComponent>(
+				Box,
+				glm::vec2(128,0),
+				32 * SCALE_FACTOR_32,
+				32 * SCALE_FACTOR_32
+			);
+			sci3.AddComponent<ScientistComponent>();
+			sci3.AddTag(Scientist);
 
 			//---//Ground//---//
 			//main room
